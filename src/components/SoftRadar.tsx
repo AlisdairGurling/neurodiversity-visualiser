@@ -7,6 +7,7 @@ import {
   instrumentsCache,
   setDomain,
 } from '../store';
+import { theme } from '../theme';
 import type { CognitionProfile, DomainId, Instrument } from '../types';
 
 type Anchor = { angle: number; radius: number };
@@ -159,17 +160,25 @@ export function SoftRadar() {
         t += 0.004;
 
         const n = DOMAINS.length;
+        const dark = theme() === 'dark';
 
-        // guide rings
+        // guide rings + spokes — lifted to a near-foreground neutral in dark mode
+        const gridStroke: [number, number, number, number] = dark
+          ? [200, 200, 220, 50]
+          : [210, 205, 215, 140];
+        const spokeStroke: [number, number, number, number] = dark
+          ? [200, 200, 220, 40]
+          : [220, 215, 225, 120];
+        const labelFill = dark ? 220 : 70;
+
         p.noFill();
-        p.stroke(210, 205, 215, 140);
+        p.stroke(gridStroke[0], gridStroke[1], gridStroke[2], gridStroke[3]);
         p.strokeWeight(1);
         for (const frac of [0.25, 0.5, 0.75, 1.0]) {
           p.circle(cx, cy, r * frac * 2);
         }
 
-        // faint spokes
-        p.stroke(220, 215, 225, 120);
+        p.stroke(spokeStroke[0], spokeStroke[1], spokeStroke[2], spokeStroke[3]);
         for (let i = 0; i < n; i++) {
           const a = -Math.PI / 2 + (i * 2 * Math.PI) / n;
           p.line(cx, cy, cx + Math.cos(a) * r, cy + Math.sin(a) * r);
@@ -240,7 +249,7 @@ export function SoftRadar() {
 
         // axis labels
         p.noStroke();
-        p.fill(70);
+        p.fill(labelFill);
         p.textAlign(p.CENTER, p.CENTER);
         p.textSize(12);
         for (let i = 0; i < n; i++) {

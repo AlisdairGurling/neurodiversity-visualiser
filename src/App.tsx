@@ -11,6 +11,7 @@ import {
   setActiveInstruments,
 } from './store';
 import { decodeShare } from './share';
+import { applyTheme, theme } from './theme';
 
 type MobilePane = 'sliders' | 'instruments';
 
@@ -25,6 +26,8 @@ export function App() {
       history.scrollRestoration = 'manual';
     }
     window.scrollTo(0, 0);
+
+    applyTheme(theme());
 
     loadInstruments();
     const decoded = decodeShare(window.location.hash);
@@ -115,7 +118,7 @@ export function App() {
       <footer class="app-footer">
         <span>A project by Alisdair Gurling.</span>
         <span class="footer-note">
-          Part of ongoing doctoral research into neurodivergent learning and instruments of change.
+          Part of doctoral research into neurodivergent learning and instruments of change.
         </span>
       </footer>
     </div>

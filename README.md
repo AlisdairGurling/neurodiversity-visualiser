@@ -58,4 +58,4 @@ Deployed as a static site on Netlify.
 
 ## Credit
 
-A project by **Alisdair Gurling**, as part of ongoing doctoral research into neurodivergent learning and instruments of change. The theoretical vocabulary — instruments of change, the Tool Line, brute force / sidestep / leapfrog, the Dyslexic Room, the SEAT framework, is developed in that thesis.
+A project by **Alisdair Gurling**, part of doctoral research into neurodivergent learning and instruments of change. The theoretical vocabulary — instruments of change, the Tool Line, brute force / sidestep / leapfrog, the Dyslexic Room, the SEAT framework — is developed in that thesis.

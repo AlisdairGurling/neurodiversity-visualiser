@@ -66,3 +66,8 @@ export function setActiveInstruments(ids: Iterable<string>) {
 export function snapshotProfile(): CognitionProfile {
   return { ...profile } as CognitionProfile;
 }
+
+export function resetAll() {
+  for (const d of DOMAINS) setProfile(d.id, 50);
+  setActive(new Set<string>());
+}

@@ -70,6 +70,18 @@ export function InstrumentPalette() {
         Tap to toggle, or drag an instrument onto the shape to layer it in.
       </p>
 
+      <ul class="tool-line-legend" aria-label="Tool line legend">
+        <li>
+          <span class="tool-line tool-line-accepted" /> Accepted
+        </li>
+        <li>
+          <span class="tool-line tool-line-contested" /> Contested
+        </li>
+        <li>
+          <span class="tool-line tool-line-stigmatised" /> Stigmatised
+        </li>
+      </ul>
+
       <Show when={instrumentsLoadStatus() === 'loading'}>
         <p class="palette-status">Loading instruments…</p>
       </Show>
@@ -127,6 +139,7 @@ export function InstrumentPalette() {
                           </span>
                           <span class="instrument-desc">{inst.description}</span>
                         </span>
+                        <span class="instrument-grip" aria-hidden="true">⋮⋮</span>
                       </button>
                     </li>
                   );
