@@ -4,6 +4,7 @@ import { DomainSliders } from './components/DomainSliders';
 import { InstrumentPalette } from './components/InstrumentPalette';
 import { Toolbar } from './components/Toolbar';
 import { ImportPanel } from './components/ImportPanel';
+import { WelcomeModal } from './components/WelcomeModal';
 import {
   activateInstrument,
   applyProfilePatch,
@@ -39,6 +40,7 @@ export function App() {
 
   return (
     <div class="app">
+      <WelcomeModal />
       <header class="app-header">
         <div class="app-title">
           <h1>Neurodiversity Visualiser</h1>

@@ -1,12 +1,13 @@
 import { createSignal } from 'solid-js';
 import { PdfImport } from './PdfImport';
 import { FreeTextImport } from './FreeTextImport';
+import { QuestionFlow } from './QuestionFlow';
 
-type Mode = 'pdf' | 'describe';
+type Mode = 'questions' | 'pdf' | 'describe';
 
 export function ImportPanel() {
-  const [mode, setMode] = createSignal<Mode>('pdf');
-  const [open, setOpen] = createSignal(false);
+  const [mode, setMode] = createSignal<Mode>('questions');
+  const [open, setOpen] = createSignal(true);
 
   return (
     <section class="import-panel">
@@ -14,8 +15,9 @@ export function ImportPanel() {
         type="button"
         class="import-toggle"
         onClick={() => setOpen(!open())}
+        aria-expanded={open()}
       >
-        <span>Populate from a report</span>
+        <span>Build the shape</span>
         <span class="import-chevron">{open() ? '▾' : '▸'}</span>
       </button>
       {open() && (
@@ -24,7 +26,17 @@ export function ImportPanel() {
             <button
               type="button"
               role="tab"
+              class={mode() === 'questions' ? 'active' : ''}
+              aria-selected={mode() === 'questions'}
+              onClick={() => setMode('questions')}
+            >
+              Questions
+            </button>
+            <button
+              type="button"
+              role="tab"
               class={mode() === 'pdf' ? 'active' : ''}
+              aria-selected={mode() === 'pdf'}
               onClick={() => setMode('pdf')}
             >
               Drop PDF
@@ -33,12 +45,15 @@ export function ImportPanel() {
               type="button"
               role="tab"
               class={mode() === 'describe' ? 'active' : ''}
+              aria-selected={mode() === 'describe'}
               onClick={() => setMode('describe')}
             >
-              Describe in words
+              Describe
             </button>
           </div>
-          {mode() === 'pdf' ? <PdfImport /> : <FreeTextImport />}
+          {mode() === 'questions' && <QuestionFlow />}
+          {mode() === 'pdf' && <PdfImport />}
+          {mode() === 'describe' && <FreeTextImport />}
         </div>
       )}
     </section>

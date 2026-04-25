@@ -608,6 +608,204 @@ input[type="range"] {
   word-break: break-word;
 }
 
+/* question flow */
+.question-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+.question-intro {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.question-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.question-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  overflow: hidden;
+  transition: border-color 120ms;
+}
+.question-card.answered { border-color: var(--base); }
+.question-card.open { border-color: var(--accent); }
+.question-head {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.7rem;
+  background: transparent;
+  border: none;
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+.question-prompt { font-weight: 700; }
+.question-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: var(--base);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.question-body {
+  padding: 0 0.7rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.question-hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.question-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.option-chip {
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg);
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color 120ms, background 120ms, color 120ms;
+}
+.option-chip:hover { border-color: var(--accent); }
+.option-chip.picked {
+  background: var(--base);
+  border-color: var(--base-deep);
+  color: #fff;
+}
+.question-clear {
+  align-self: flex-start;
+  padding: 0.35rem 0.7rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  color: var(--muted);
+  cursor: pointer;
+}
+.question-clear:hover { color: var(--error-fg); border-color: var(--error-fg); }
+
+/* welcome modal */
+.welcome-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 28, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 1rem;
+  animation: welcome-fade-in 200ms ease;
+}
+.welcome-modal {
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem 1.6rem 1.4rem;
+  max-width: 540px;
+  width: 100%;
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+.welcome-modal h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1.6rem;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.welcome-modal p {
+  margin: 0 0 0.7rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.welcome-lede {
+  font-size: 0.98rem;
+  margin-bottom: 0.9rem;
+}
+.welcome-paths {
+  list-style: none;
+  margin: 0 0 0.9rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.welcome-paths li {
+  padding: 0.5rem 0.7rem;
+  background: var(--bg);
+  border-left: 3px solid var(--base);
+  border-radius: 4px;
+  font-size: 0.86rem;
+}
+.welcome-paths li strong { color: var(--base-deep); }
+.welcome-video-slot {
+  border: 1.5px dashed var(--border);
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 0.9rem 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-style: italic;
+}
+.welcome-modal button.primary {
+  display: inline-block;
+  margin-top: 0.4rem;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #fff;
+  border-radius: 6px;
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.welcome-modal button.primary:hover { filter: brightness(1.05); }
+
+@keyframes welcome-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 480px) {
+  .welcome-modal { padding: 1.1rem 1rem 1rem; }
+  .welcome-modal h2 { font-size: 1.3rem; }
+  .welcome-modal p { font-size: 0.88rem; }
+}
+
 /* mobile / narrow viewport tabbed layout */
 .mobile-tabs { display: none; }
 
