@@ -87,6 +87,13 @@ h1, h2, h3 {
   min-height: 0;
 }
 
+/* Markup order is: canvas, mobile-tabs, sliders, instruments — pin each
+   pane to its desktop column explicitly so the implicit auto-flow doesn't
+   put the canvas in the 280px slot. */
+.sliders { grid-column: 1; grid-row: 1; }
+.canvas-pane { grid-column: 2; grid-row: 1; }
+.instruments { grid-column: 3; grid-row: 1; }
+
 aside, main {
   overflow-y: auto;
   padding: 1rem 1.1rem;
@@ -532,15 +539,17 @@ input[type="range"] {
 @media (max-width: 900px) {
   .app-body {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto;
+  }
+
+  /* let the panes stack in markup order (canvas → tabs → sliders/instruments) */
+  .sliders, .canvas-pane, .instruments {
+    grid-column: 1;
+    grid-row: auto;
   }
 
   aside, main { border: none !important; padding: 0.85rem 1rem; }
 
-  .canvas-pane {
-    order: -1;
-    min-height: 60vh;
-  }
+  .canvas-pane { min-height: 60vh; }
   .radar-host { min-height: 55vh; }
   .canvas-caption { padding: 0.5rem 1rem 0.6rem; font-size: 0.78rem; }
 
