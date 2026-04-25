@@ -47,8 +47,11 @@ h1, h2, h3 {
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
+  /* Lock to the viewport on desktop so the layout never grows past the
+     window. Side panes scroll internally. Mobile media query relaxes this. */
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .app-header {
@@ -83,6 +86,10 @@ h1, h2, h3 {
 .app-body {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr) 340px;
+  /* Single row that fills whatever vertical space is left after the header
+     and footer. minmax(0, 1fr) lets the asides scroll internally instead of
+     forcing the row taller than the viewport. */
+  grid-template-rows: minmax(0, 1fr);
   flex: 1;
   min-height: 0;
 }
@@ -538,8 +545,15 @@ input[type="range"] {
 .mobile-tabs { display: none; }
 
 @media (max-width: 900px) {
+  .app {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
   .app-body {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
   }
 
   /* let the panes stack in markup order (canvas → tabs → sliders/instruments) */
