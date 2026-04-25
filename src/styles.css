@@ -89,10 +89,11 @@ h1, h2, h3 {
 
 /* Markup order is: canvas, mobile-tabs, sliders, instruments — pin each
    pane to its desktop column explicitly so the implicit auto-flow doesn't
-   put the canvas in the 280px slot. */
-.sliders { grid-column: 1; grid-row: 1; }
-.canvas-pane { grid-column: 2; grid-row: 1; }
-.instruments { grid-column: 3; grid-row: 1; }
+   put the canvas in the 280px slot. min-height:0 lets overflow:auto clip
+   internal content instead of forcing the grid row taller than the viewport. */
+.sliders { grid-column: 1; grid-row: 1; min-height: 0; }
+.canvas-pane { grid-column: 2; grid-row: 1; min-height: 0; }
+.instruments { grid-column: 3; grid-row: 1; min-height: 0; }
 
 aside, main {
   overflow-y: auto;

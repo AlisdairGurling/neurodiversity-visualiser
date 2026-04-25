@@ -13,6 +13,13 @@ export function App() {
   const [mobilePane, setMobilePane] = createSignal<MobilePane>('sliders');
 
   onMount(() => {
+    // Stop the browser auto-scrolling to a remembered position or to a non-
+    // existent element matching a share-URL hash like "#p=...".
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
+
     loadInstruments();
     const decoded = decodeShare(window.location.hash);
     if (decoded) {
