@@ -61,6 +61,8 @@ export function SoftRadar() {
   let instance: p5 | undefined;
   const [dropHint, setDropHint] = createSignal(false);
 
+  let resizeObs: ResizeObserver | undefined;
+
   onMount(() => {
     if (!containerRef) return;
 
@@ -81,7 +83,9 @@ export function SoftRadar() {
         for (const d of DOMAINS) {
           const v = vertexFor(d.id, cx, cy, r);
           const dist = Math.hypot(mx - v.x, my - v.y);
-          if (dist < 22 && (!best || dist < best.dist)) best = { id: d.id, dist };
+          // bigger hit-target on touch devices
+          const radius = window.matchMedia('(pointer: coarse)').matches ? 32 : 22;
+          if (dist < radius && (!best || dist < best.dist)) best = { id: d.id, dist };
         }
         return best?.id ?? null;
       };
@@ -106,20 +110,33 @@ export function SoftRadar() {
         p.resizeCanvas(containerRef.clientWidth, containerRef.clientHeight);
       };
 
+      // Re-size when the host's box changes (mobile pane swap, sidebar collapse, orientation, etc.).
+      resizeObs = new ResizeObserver(() => {
+        if (!containerRef) return;
+        p.resizeCanvas(containerRef.clientWidth, containerRef.clientHeight);
+      });
+      resizeObs.observe(containerRef!);
+
+      // Returning false prevents the browser default — on touch this stops the page from scrolling under the drag.
       p.mousePressed = () => {
         const cx = p.width / 2;
         const cy = p.height / 2;
         const r = Math.min(p.width, p.height) * 0.36;
         const id = nearestDomain(p.mouseX, p.mouseY, cx, cy, r);
-        if (id) draggingDomain = id;
+        if (id) {
+          draggingDomain = id;
+          return false;
+        }
+        return true;
       };
 
       p.mouseDragged = () => {
-        if (!draggingDomain) return;
+        if (!draggingDomain) return true;
         const cx = p.width / 2;
         const cy = p.height / 2;
         const r = Math.min(p.width, p.height) * 0.36;
         setValueAlongAxis(draggingDomain, p.mouseX, p.mouseY, cx, cy, r);
+        return false;
       };
 
       p.mouseReleased = () => {
@@ -238,7 +255,10 @@ export function SoftRadar() {
     }, containerRef);
   });
 
-  onCleanup(() => instance?.remove());
+  onCleanup(() => {
+    instance?.remove();
+    resizeObs?.disconnect();
+  });
 
   return (
     <div

@@ -1,4 +1,4 @@
-import { onMount } from 'solid-js';
+import { createSignal, onMount } from 'solid-js';
 import { SoftRadar } from './components/SoftRadar';
 import { DomainSliders } from './components/DomainSliders';
 import { InstrumentPalette } from './components/InstrumentPalette';
@@ -7,7 +7,11 @@ import { ImportPanel } from './components/ImportPanel';
 import { applyProfilePatch, loadInstruments, setActiveInstruments } from './store';
 import { decodeShare } from './share';
 
+type MobilePane = 'sliders' | 'instruments';
+
 export function App() {
+  const [mobilePane, setMobilePane] = createSignal<MobilePane>('sliders');
+
   onMount(() => {
     loadInstruments();
     const decoded = decodeShare(window.location.hash);
@@ -29,19 +33,39 @@ export function App() {
         <Toolbar />
       </header>
       <div class="app-body">
-        <aside class="sliders">
+        <main class="canvas-pane">
+          <SoftRadar />
+          <p class="canvas-caption">
+            Drag any vertex to reshape the cognition. On a desktop, drag an instrument onto the
+            shape; on a phone, tap an instrument to layer it in.
+          </p>
+        </main>
+        <div class="mobile-tabs" role="tablist" aria-label="Mobile panel selector">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mobilePane() === 'sliders'}
+            class={mobilePane() === 'sliders' ? 'active' : ''}
+            onClick={() => setMobilePane('sliders')}
+          >
+            Cognition
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={mobilePane() === 'instruments'}
+            class={mobilePane() === 'instruments' ? 'active' : ''}
+            onClick={() => setMobilePane('instruments')}
+          >
+            Instruments
+          </button>
+        </div>
+        <aside class="sliders" data-mobile-hidden={mobilePane() !== 'sliders'}>
           <ImportPanel />
           <h2>Describe the cognition</h2>
           <DomainSliders />
         </aside>
-        <main class="canvas-pane">
-          <SoftRadar />
-          <p class="canvas-caption">
-            Drag any vertex to reshape the cognition, or drag an instrument from the
-            right-hand palette onto the shape to layer it in.
-          </p>
-        </main>
-        <aside class="instruments">
+        <aside class="instruments" data-mobile-hidden={mobilePane() !== 'instruments'}>
           <h2>Instruments of change</h2>
           <InstrumentPalette />
         </aside>
