@@ -1,4 +1,4 @@
-import { onMount, onCleanup, createSignal, Show } from 'solid-js';
+import { onMount, onCleanup } from 'solid-js';
 import p5 from 'p5';
 import { DOMAINS } from '../domains';
 import {
@@ -6,7 +6,6 @@ import {
   activeInstruments,
   instrumentsCache,
   setDomain,
-  activateInstrument,
 } from '../store';
 import type { CognitionProfile, DomainId, Instrument } from '../types';
 
@@ -59,7 +58,6 @@ function densePath(
 export function SoftRadar() {
   let containerRef: HTMLDivElement | undefined;
   let instance: p5 | undefined;
-  const [dropHint, setDropHint] = createSignal(false);
 
   let resizeObs: ResizeObserver | undefined;
 
@@ -80,12 +78,12 @@ export function SoftRadar() {
 
       const nearestDomain = (mx: number, my: number, cx: number, cy: number, r: number) => {
         let best: { id: DomainId; dist: number } | null = null;
+        // Bigger hit-target on touch devices; comfortable on desktop too.
+        const hitRadius = window.matchMedia('(pointer: coarse)').matches ? 36 : 28;
         for (const d of DOMAINS) {
           const v = vertexFor(d.id, cx, cy, r);
           const dist = Math.hypot(mx - v.x, my - v.y);
-          // bigger hit-target on touch devices
-          const radius = window.matchMedia('(pointer: coarse)').matches ? 32 : 22;
-          if (dist < radius && (!best || dist < best.dist)) best = { id: d.id, dist };
+          if (dist < hitRadius && (!best || dist < best.dist)) best = { id: d.id, dist };
         }
         return best?.id ?? null;
       };
@@ -123,10 +121,10 @@ export function SoftRadar() {
         const cy = p.height / 2;
         const r = Math.min(p.width, p.height) * 0.36;
         const id = nearestDomain(p.mouseX, p.mouseY, cx, cy, r);
-        if (id) {
-          draggingDomain = id;
-          return false;
-        }
+        // Always assign — including resetting to null on a miss-click — so a
+        // stale draggingDomain from a prior gesture can't keep moving a vertex.
+        draggingDomain = id;
+        if (id) return false;
         return true;
       };
 
@@ -260,34 +258,5 @@ export function SoftRadar() {
     resizeObs?.disconnect();
   });
 
-  return (
-    <div
-      class={`radar-host ${dropHint() ? 'drop-ready' : ''}`}
-      ref={containerRef}
-      onDragEnter={(e) => {
-        e.preventDefault();
-        setDropHint(true);
-      }}
-      onDragOver={(e) => {
-        e.preventDefault();
-        setDropHint(true);
-      }}
-      onDragLeave={(e) => {
-        // only clear when leaving the host, not when moving over the canvas child
-        if (e.target === containerRef) setDropHint(false);
-      }}
-      onDrop={(e) => {
-        e.preventDefault();
-        const id = e.dataTransfer?.getData('text/plain');
-        if (id) activateInstrument(id);
-        setDropHint(false);
-      }}
-    >
-      <Show when={dropHint()}>
-        <div class="drop-overlay">
-          <p>Drop to layer this instrument</p>
-        </div>
-      </Show>
-    </div>
-  );
+  return <div class="radar-host" ref={containerRef} />;
 }

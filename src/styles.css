@@ -230,14 +230,15 @@ input[type="range"] {
   /* let p5 own touches in this region; vertex drag won't fight scroll */
   touch-action: none;
 }
-.radar-host.drop-ready::after {
+.canvas-pane.drop-ready::after {
   content: '';
   position: absolute;
-  inset: 8px;
+  inset: 12px;
   border-radius: 12px;
   pointer-events: none;
   border: 2px dashed var(--extension);
   background: rgba(59, 161, 129, 0.06);
+  z-index: 1;
 }
 .drop-overlay {
   position: absolute;
