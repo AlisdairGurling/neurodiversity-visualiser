@@ -4,6 +4,24 @@ import { DOMAINS } from './domains';
 import { currentSource } from './data/instruments-source';
 import type { CognitionProfile, DomainId, Instrument } from './types';
 
+const QUESTION_SELECTIONS_KEY = 'nv.questionSelections';
+
+function loadQuestionSelections(): ReadonlySet<string> {
+  try {
+    const raw = localStorage.getItem(QUESTION_SELECTIONS_KEY);
+    if (!raw) return new Set<string>();
+    const arr = JSON.parse(raw);
+    if (Array.isArray(arr)) return new Set<string>(arr.filter((s) => typeof s === 'string'));
+    return new Set<string>();
+  } catch {
+    return new Set<string>();
+  }
+}
+
+function persistQuestionSelections(set: ReadonlySet<string>) {
+  localStorage.setItem(QUESTION_SELECTIONS_KEY, JSON.stringify([...set]));
+}
+
 const defaultProfile = Object.fromEntries(
   DOMAINS.map((d) => [d.id, 50]),
 ) as CognitionProfile;
@@ -12,6 +30,16 @@ export const [profile, setProfile] = createStore<CognitionProfile>(defaultProfil
 
 const [active, setActive] = createSignal<ReadonlySet<string>>(new Set());
 export const activeInstruments = active;
+
+const [questionSelections, setQuestionSelectionsSignal] = createSignal<ReadonlySet<string>>(
+  loadQuestionSelections(),
+);
+export { questionSelections };
+
+export function setQuestionSelections(next: ReadonlySet<string>) {
+  setQuestionSelectionsSignal(next);
+  persistQuestionSelections(next);
+}
 
 const [instruments, setInstruments] = createSignal<Instrument[]>([]);
 const [instrumentsStatus, setInstrumentsStatus] = createSignal<
@@ -70,4 +98,5 @@ export function snapshotProfile(): CognitionProfile {
 export function resetAll() {
   for (const d of DOMAINS) setProfile(d.id, 50);
   setActive(new Set<string>());
+  setQuestionSelections(new Set<string>());
 }

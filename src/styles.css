@@ -709,6 +709,37 @@ input[type="range"] {
 }
 .question-clear:hover { color: var(--error-fg); border-color: var(--error-fg); }
 
+.question-about {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.7rem;
+  background: var(--bg);
+}
+.question-about summary {
+  cursor: pointer;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+.question-about[open] summary { margin-bottom: 0.4rem; }
+.question-about p {
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  color: var(--fg);
+  line-height: 1.45;
+}
+.question-about ul {
+  margin: 0;
+  padding-left: 1rem;
+  font-size: 0.72rem;
+  color: var(--muted);
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.question-about a { color: var(--accent); }
+
 /* welcome modal */
 .welcome-backdrop {
   position: fixed;

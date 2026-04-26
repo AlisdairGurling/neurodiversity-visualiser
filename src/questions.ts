@@ -13,10 +13,49 @@ export type Question = {
   options: QuestionOption[];
 };
 
+export type QuestionCitation = {
+  text: string;
+  url?: string;
+};
+
+// Research the question set draws on. The framing is strengths-based first
+// (Armstrong; Eide & Eide; Mottron) with effort areas surfaced gently rather
+// than via deficit language (Crespi; White & Shah on ADHD divergent thinking).
+export const QUESTION_CITATIONS: QuestionCitation[] = [
+  {
+    text: 'Armstrong, T. (2010). The Power of Neurodiversity: Discovering the Extraordinary Gifts of Autism, ADHD, Dyslexia, and Other Brain Differences. Da Capo Lifelong Books.',
+  },
+  {
+    text: 'Eide, B. L., & Eide, F. F. (2011). The Dyslexic Advantage: Unlocking the Hidden Potential of the Dyslexic Brain. Hudson Street Press.',
+  },
+  {
+    text: 'Mottron, L., Dawson, M., Soulières, I., Hubert, B., & Burack, J. (2006). Enhanced perceptual functioning in autism: An update, and eight principles of autistic perception. Journal of Autism and Developmental Disorders, 36(1), 27–43.',
+    url: 'https://doi.org/10.1007/s10803-005-0040-7',
+  },
+  {
+    text: 'White, H. A., & Shah, P. (2011). Creative style and achievement in adults with attention-deficit/hyperactivity disorder. Personality and Individual Differences, 50(5), 673–677.',
+    url: 'https://doi.org/10.1016/j.paid.2010.12.015',
+  },
+  {
+    text: 'Crespi, B. J. (2016). Autism as a disorder of high intelligence. Frontiers in Neuroscience, 10, 300.',
+    url: 'https://doi.org/10.3389/fnins.2016.00300',
+  },
+  {
+    text: 'Baron-Cohen, S. (2002). The extreme male brain theory of autism. Trends in Cognitive Sciences, 6(6), 248–254.',
+    url: 'https://doi.org/10.1016/S1364-6613(02)01904-6',
+  },
+  {
+    text: 'Logan, J. (2009). Dyslexic entrepreneurs: The incidence; their coping strategies and their business skills. Dyslexia, 15(4), 328–346.',
+    url: 'https://doi.org/10.1002/dys.388',
+  },
+];
+
 // Strengths-based, non-numeric prompts. Each option carries small lifts to one
 // or more cognitive/functional domains. Multi-select; nothing is right or wrong.
-// The final question gently surfaces effort areas via small negative lifts so the
-// shape can have troughs as well as peaks without using deficit language.
+// The set is sized to surface neurodivergent cognitive shapes — dyslexic
+// narrative/spatial reasoning (Eide & Eide), autistic enhanced perception and
+// systemising (Mottron, Baron-Cohen), ADHD divergent thinking and hyperfocus
+// (White & Shah) — without using diagnostic labels.
 export const QUESTIONS: Question[] = [
   {
     id: 'pulls',
@@ -78,7 +117,7 @@ export const QUESTIONS: Question[] = [
   {
     id: 'noticing',
     prompt: 'What do you notice that other people seem to miss?',
-    hint: 'A different way to ask about strengths.',
+    hint: 'Enhanced perception is a real strength — name yours.',
     options: [
       { id: 'mood', label: 'Subtle shifts in mood or tone', lifts: { words: 14, focus: 8 } },
       { id: 'pattern-systems', label: 'Patterns underneath a system', lifts: { puzzles: 20, space: 8 } },
@@ -98,9 +137,77 @@ export const QUESTIONS: Question[] = [
     ],
   },
   {
+    id: 'hyperfocus',
+    prompt: 'What do you do for hours when no one is asking?',
+    hint: 'Where intrinsic interest pulls you deep.',
+    options: [
+      { id: 'one-topic', label: 'Lose myself in a single topic, deeper than seems useful', lifts: { focus: 16, holding: 8 } },
+      { id: 'projects', label: 'Plan and re-plan projects I might never start', lifts: { planning: 14, puzzles: 10 } },
+      { id: 'wide-reading', label: 'Read across many fields, sideways from the day', lifts: { reading: 18, words: 10 } },
+      { id: 'making', label: 'Build, draw, design something for the joy of it', lifts: { space: 18, focus: 6 } },
+      { id: 'writing-out', label: 'Write, journal, work ideas out in text', lifts: { writing: 18, words: 12 } },
+      { id: 'abstract', label: 'Play with numbers, codes, music, abstract systems', lifts: { numbers: 14, puzzles: 14 } },
+    ],
+  },
+  {
+    id: 'connections',
+    prompt: 'How do you make connections between unrelated things?',
+    hint: 'Lateral thinking has many shapes.',
+    options: [
+      { id: 'metaphors', label: 'Through metaphors and stories that bridge fields', lifts: { words: 14, puzzles: 10 } },
+      { id: 'visual-parallels', label: 'I see visual or spatial parallels', lifts: { space: 16 } },
+      { id: 'system-pattern', label: 'I notice the same pattern in different systems', lifts: { puzzles: 18 } },
+      { id: 'echoes', label: 'I feel echoes of past situations in new ones', lifts: { holding: 14, planning: 8 } },
+      { id: 'leaps', label: 'I make leaps that surprise even me', lifts: { puzzles: 14, quick: 10 } },
+    ],
+  },
+  {
+    id: 'reading-good-day',
+    prompt: 'What does reading look like for you on a good day?',
+    options: [
+      { id: 'devour', label: 'I devour long-form text and remember it', lifts: { reading: 20, holding: 12 } },
+      { id: 'skim', label: 'I read fast and skim well', lifts: { reading: 16, quick: 14 } },
+      { id: 'ear', label: 'My ear is sharper than my eye — audiobooks unlock more', lifts: { words: 16 } },
+      { id: 'close', label: 'I read closely; I notice every word', lifts: { reading: 14, focus: 14 } },
+      { id: 'sketch', label: 'I sketch or note as I read; the pen carries the meaning', lifts: { space: 12, reading: 8 } },
+    ],
+  },
+  {
+    id: 'writing-easiest',
+    prompt: 'When does writing feel easiest?',
+    options: [
+      { id: 'capture', label: 'When I am chasing a thought I want to capture', lifts: { writing: 22, words: 16 } },
+      { id: 'voice', label: 'When I can speak it out and tidy later', lifts: { writing: 14, words: 14 } },
+      { id: 'scaffold', label: 'When someone hands me a clear structure', lifts: { writing: 14, planning: 10 } },
+      { id: 'sketch-first', label: 'When I can sketch or mind-map before words', lifts: { writing: 14, space: 14 } },
+    ],
+  },
+  {
+    id: 'pace',
+    prompt: 'What does your pace look like in your work?',
+    options: [
+      { id: 'familiar-fast', label: 'Fastest when familiar; takes time when new', lifts: { quick: 18, planning: 8 } },
+      { id: 'bursts', label: 'I think in bursts — fast, then a long pause', lifts: { quick: 14, focus: 8 } },
+      { id: 'slow-right', label: 'I prefer to be slow and right', lifts: { focus: 14, planning: 12 } },
+      { id: 'aloud', label: 'I think fastest by talking aloud', lifts: { words: 14, quick: 10 } },
+    ],
+  },
+  {
+    id: 'sensory',
+    prompt: 'How does the world come at you through your senses?',
+    hint: 'Sensory profile shapes when and how you can think.',
+    options: [
+      { id: 'quiet-best', label: 'I do my best work somewhere quiet', lifts: { focus: 14 } },
+      { id: 'movement-helps', label: 'I think faster when I can move', lifts: { focus: 12, quick: 8 } },
+      { id: 'fine-detail', label: 'I notice fine sensory detail others miss', lifts: { space: 14, focus: 6 } },
+      { id: 'crowded-drains', label: 'Loud or crowded settings drain me quickly', lifts: { focus: -10 } },
+      { id: 'social-cues', label: 'I pick up on subtle social cues', lifts: { words: 12 } },
+    ],
+  },
+  {
     id: 'energy',
     prompt: 'What tends to take more energy than people might guess?',
-    hint: 'Knowing where you ration your energy is a strength too.',
+    hint: 'Knowing where you ration energy is a strength too.',
     options: [
       { id: 'dense-text', label: 'Reading dense or long text', lifts: { reading: -16 } },
       { id: 'many-threads', label: 'Holding many threads at once', lifts: { holding: -16 } },
@@ -109,6 +216,7 @@ export const QUESTIONS: Question[] = [
       { id: 'mental-arithmetic', label: 'Mental arithmetic on the fly', lifts: { numbers: -14, quick: -8 } },
       { id: 'still-detail', label: 'Sitting still through repetitive detail', lifts: { focus: -16 } },
       { id: 'handwriting', label: 'Handwriting at length', lifts: { writing: -14 } },
+      { id: 'unstructured-time', label: 'Open-ended, unstructured time', lifts: { planning: -14, focus: -8 } },
     ],
   },
 ];
