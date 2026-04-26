@@ -1,6 +1,5 @@
 import { createSignal, onMount, Show } from 'solid-js';
 import { SoftRadar } from './components/SoftRadar';
-import { DomainSliders } from './components/DomainSliders';
 import { InstrumentPalette } from './components/InstrumentPalette';
 import { Toolbar } from './components/Toolbar';
 import { ImportPanel } from './components/ImportPanel';
@@ -109,8 +108,6 @@ export function App() {
         </div>
         <aside class="sliders" data-mobile-hidden={mobilePane() !== 'sliders'}>
           <ImportPanel />
-          <h2>Describe the cognition</h2>
-          <DomainSliders />
         </aside>
         <aside class="instruments" data-mobile-hidden={mobilePane() !== 'instruments'}>
           <h2>Instruments of change</h2>
