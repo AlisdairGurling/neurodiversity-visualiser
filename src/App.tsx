@@ -25,7 +25,10 @@ export function App() {
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
+    // Snap to top now, and again after the first paint — mobile in particular
+    // can re-scroll once layout settles or the welcome modal opens.
     window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
 
     applyTheme(theme());
 

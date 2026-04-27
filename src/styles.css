@@ -806,6 +806,19 @@ input[type="range"] {
   font-size: 0.78rem;
   font-style: italic;
 }
+.welcome-video {
+  margin: 0.9rem 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+.welcome-video video {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  background: #000;
+}
 .welcome-modal button.primary {
   display: inline-block;
   margin-top: 0.4rem;
