@@ -5,7 +5,13 @@ import {
   type Question,
   type QuestionOption,
 } from '../questions';
-import { profile, questionSelections, setDomain, setQuestionSelections } from '../store';
+import {
+  experienceMode,
+  profile,
+  questionSelections,
+  setDomain,
+  setQuestionSelections,
+} from '../store';
 import type { DomainId } from '../types';
 
 function applyLifts(opt: QuestionOption, sign: 1 | -1) {
@@ -15,8 +21,18 @@ function applyLifts(opt: QuestionOption, sign: 1 | -1) {
   }
 }
 
+function speak(text: string) {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.rate = 0.95;
+  window.speechSynthesis.speak(utter);
+}
+
 export function QuestionFlow() {
   const [openId, setOpenId] = createSignal<string | null>(null);
+  const soundOn = () => experienceMode() === 'sound';
+  const wordFirst = () => experienceMode() === 'word';
 
   const isPicked = (q: Question, opt: QuestionOption) =>
     questionSelections().has(`${q.id}/${opt.id}`);
@@ -44,6 +60,12 @@ export function QuestionFlow() {
     setQuestionSelections(new Set<string>());
   }
 
+  function readWhole(q: Question) {
+    const optionText = q.options.map((o) => o.label).join('. ');
+    const full = `${q.prompt}${q.hint ? '. ' + q.hint : ''}. Options: ${optionText}.`;
+    speak(full);
+  }
+
   return (
     <div class="question-flow">
       <p class="question-intro">
@@ -52,7 +74,7 @@ export function QuestionFlow() {
         domains and lean towards how neurodivergent minds tend to be strong.
       </p>
 
-      <details class="question-about">
+      <details class="question-about" open={wordFirst() || undefined}>
         <summary>About these questions</summary>
         <p>
           Drawn from strengths-based research on neurodivergent cognition —
@@ -81,7 +103,7 @@ export function QuestionFlow() {
       <div class="question-grid">
         <For each={QUESTIONS}>
           {(q) => {
-            const isOpen = () => openId() === q.id;
+            const isOpen = () => openId() === q.id || wordFirst();
             const answeredCount = () =>
               q.options.filter((o) => questionSelections().has(`${q.id}/${o.id}`)).length;
             return (
@@ -90,19 +112,32 @@ export function QuestionFlow() {
                   answeredCount() > 0 ? 'answered' : ''
                 }`}
               >
-                <button
-                  type="button"
-                  class="question-head"
-                  onClick={() => setOpenId(isOpen() ? null : q.id)}
-                  aria-expanded={isOpen()}
-                >
-                  <span class="question-prompt">{q.prompt}</span>
-                  <Show when={answeredCount() > 0}>
-                    <span class="question-count" aria-label={`${answeredCount()} chosen`}>
-                      {answeredCount()}
-                    </span>
+                <div class="question-head-row">
+                  <button
+                    type="button"
+                    class="question-head"
+                    onClick={() => setOpenId(openId() === q.id ? null : q.id)}
+                    aria-expanded={isOpen()}
+                  >
+                    <span class="question-prompt">{q.prompt}</span>
+                    <Show when={answeredCount() > 0}>
+                      <span class="question-count" aria-label={`${answeredCount()} chosen`}>
+                        {answeredCount()}
+                      </span>
+                    </Show>
+                  </button>
+                  <Show when={soundOn()}>
+                    <button
+                      type="button"
+                      class="question-listen"
+                      onClick={() => readWhole(q)}
+                      aria-label={`Read "${q.prompt}" aloud`}
+                      title="Read aloud"
+                    >
+                      🔊
+                    </button>
                   </Show>
-                </button>
+                </div>
                 <Show when={isOpen()}>
                   <div class="question-body">
                     <Show when={q.hint}>

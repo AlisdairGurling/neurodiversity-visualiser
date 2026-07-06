@@ -7,9 +7,11 @@ import { WelcomeModal } from './components/WelcomeModal';
 import {
   activateInstrument,
   applyProfilePatch,
+  hoveredDomain,
   loadInstruments,
   setActiveInstruments,
 } from './store';
+import { DOMAINS } from './domains';
 import { decodeShare } from './share';
 import { applyTheme, theme } from './theme';
 
@@ -85,8 +87,28 @@ export function App() {
             </div>
           </Show>
           <p class="canvas-caption">
-            Drag any vertex to reshape the cognition. On a desktop, drag an instrument onto the
-            shape; on a phone, tap an instrument to layer it in.
+            <Show
+              when={hoveredDomain()}
+              fallback={
+                <>
+                  Hover a vertex for its description. Drag any vertex to reshape the cognition. On
+                  a desktop, drag an instrument onto the shape; on a phone, tap an instrument to
+                  layer it in.
+                </>
+              }
+            >
+              {(id) => {
+                const d = DOMAINS.find((x) => x.id === id());
+                return (
+                  <Show when={d}>
+                    <span class="caption-label">{d!.label}</span>
+                    <span class="caption-clinical"> — {d!.clinicalTerm}</span>
+                    <br />
+                    <span class="caption-desc">{d!.description}</span>
+                  </Show>
+                );
+              }}
+            </Show>
           </p>
         </main>
         <div class="mobile-tabs" role="tablist" aria-label="Mobile panel selector">

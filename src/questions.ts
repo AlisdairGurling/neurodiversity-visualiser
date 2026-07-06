@@ -97,10 +97,11 @@ export const QUESTIONS: Question[] = [
     prompt: 'What do other people often ask for your help with?',
     options: [
       { id: 'wordy', label: 'Writing emails, articles, anything wordy', lifts: { writing: 22, words: 16 } },
-      { id: 'maths', label: 'Maths, calculations, spreadsheets', lifts: { numbers: 24 } },
+      { id: 'maths', label: 'Maths and calculations in their head', lifts: { numbers: 22, quick: 8 } },
+      { id: 'spreadsheets', label: 'Spreadsheets and structured data', lifts: { numbers: 14, planning: 14 } },
       { id: 'critique', label: 'Spotting what is wrong with their plan', lifts: { puzzles: 20, planning: 8 } },
       { id: 'organising', label: 'Organising a project or schedule', lifts: { planning: 24 } },
-      { id: 'visual', label: 'Designing a space or visual', lifts: { space: 22 } },
+      { id: 'visual', label: 'Designing a space or a visual', lifts: { space: 22 } },
     ],
   },
   {
@@ -159,6 +160,18 @@ export const QUESTIONS: Question[] = [
       { id: 'system-pattern', label: 'I notice the same pattern in different systems', lifts: { puzzles: 18 } },
       { id: 'echoes', label: 'I feel echoes of past situations in new ones', lifts: { holding: 14, planning: 8 } },
       { id: 'leaps', label: 'I make leaps that surprise even me', lifts: { puzzles: 14, quick: 10 } },
+    ],
+  },
+  {
+    id: 'imagery',
+    prompt: 'How does imagination move for you?',
+    hint: 'Some minds hold a still picture; others can only hold objects in motion.',
+    options: [
+      { id: 'still', label: 'Still images I can hold and study', lifts: { space: 14, focus: 6 } },
+      { id: 'motion', label: 'Things in motion — dance, flight, mechanisms', lifts: { space: 18, focus: 8 } },
+      { id: 'words-stream', label: 'A stream of words rather than pictures', lifts: { words: 18, writing: 8 } },
+      { id: 'sound', label: 'Sounds, rhythms, or music', lifts: { words: 12, focus: 6 } },
+      { id: 'body', label: 'A felt sense somewhere in the body', lifts: { space: 8, focus: 8 } },
     ],
   },
   {

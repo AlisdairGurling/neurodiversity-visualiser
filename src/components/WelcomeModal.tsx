@@ -1,6 +1,13 @@
-import { createEffect, createSignal, onCleanup, onMount, Show } from 'solid-js';
+import { createEffect, createSignal, For, onCleanup, onMount, Show } from 'solid-js';
+import { experienceMode, setExperienceMode, type ExperienceMode } from '../store';
 
 const STORAGE_KEY = 'nv.welcomeSeen';
+
+const MODES: { id: ExperienceMode; label: string; blurb: string }[] = [
+  { id: 'visual', label: 'Visual-first', blurb: 'Let the shape do the talking.' },
+  { id: 'word', label: 'Word-first', blurb: 'Descriptions open by default.' },
+  { id: 'sound', label: 'Sound-first', blurb: 'Prompts can be read aloud.' },
+];
 
 // Drop a file into public/videos/ at these paths to populate the welcome
 // video. The fetch HEAD-check below means the placeholder is shown until a
@@ -119,6 +126,29 @@ export function WelcomeModal() {
               </video>
             </div>
           </Show>
+
+          <fieldset class="welcome-mode">
+            <legend>How would you like to explore?</legend>
+            <div class="welcome-mode-options">
+              <For each={MODES}>
+                {(m) => (
+                  <label
+                    class={`welcome-mode-option ${experienceMode() === m.id ? 'chosen' : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name="experience-mode"
+                      value={m.id}
+                      checked={experienceMode() === m.id}
+                      onChange={() => setExperienceMode(m.id)}
+                    />
+                    <span class="welcome-mode-label">{m.label}</span>
+                    <span class="welcome-mode-blurb">{m.blurb}</span>
+                  </label>
+                )}
+              </For>
+            </div>
+          </fieldset>
 
           <button type="button" class="primary" onClick={dismiss}>
             Get started

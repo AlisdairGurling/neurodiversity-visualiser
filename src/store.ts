@@ -31,6 +31,28 @@ export const [profile, setProfile] = createStore<CognitionProfile>(defaultProfil
 const [active, setActive] = createSignal<ReadonlySet<string>>(new Set());
 export const activeInstruments = active;
 
+// Currently-focused vertex on the radar — for the caption-area micro-description.
+const [hoveredDomainSignal, setHoveredDomainSignal] = createSignal<DomainId | null>(null);
+export const hoveredDomain = hoveredDomainSignal;
+export function setHoveredDomain(d: DomainId | null) {
+  setHoveredDomainSignal(d);
+}
+
+// User's preferred way of exploring — visual (default radar), word (auto-expanded
+// text descriptions), or sound (spoken narration via SpeechSynthesis).
+export type ExperienceMode = 'visual' | 'word' | 'sound';
+const EXPERIENCE_KEY = 'nv.experienceMode';
+function loadExperienceMode(): ExperienceMode {
+  const v = localStorage.getItem(EXPERIENCE_KEY);
+  return v === 'word' || v === 'sound' ? v : 'visual';
+}
+const [experience, setExperienceSignal] = createSignal<ExperienceMode>(loadExperienceMode());
+export const experienceMode = experience;
+export function setExperienceMode(m: ExperienceMode) {
+  setExperienceSignal(m);
+  localStorage.setItem(EXPERIENCE_KEY, m);
+}
+
 const [questionSelections, setQuestionSelectionsSignal] = createSignal<ReadonlySet<string>>(
   loadQuestionSelections(),
 );

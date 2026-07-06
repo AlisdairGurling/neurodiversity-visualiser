@@ -299,6 +299,20 @@ input[type="range"] {
   font-size: 0.8rem;
   font-style: italic;
   text-align: center;
+  min-height: 3rem;
+}
+.canvas-caption .caption-label {
+  color: var(--base-deep);
+  font-style: normal;
+  font-weight: 700;
+}
+.canvas-caption .caption-clinical {
+  color: var(--muted);
+  font-style: italic;
+}
+.canvas-caption .caption-desc {
+  color: var(--fg);
+  font-style: normal;
 }
 
 /* instruments palette */
@@ -709,6 +723,23 @@ input[type="range"] {
 }
 .question-clear:hover { color: var(--error-fg); border-color: var(--error-fg); }
 
+.question-head-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+}
+.question-head-row .question-head { flex: 1; }
+.question-listen {
+  padding: 0 0.7rem;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--muted);
+  border-radius: 6px;
+}
+.question-listen:hover { color: var(--accent); background: var(--accent-soft); }
+
 .question-about {
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -819,6 +850,49 @@ input[type="range"] {
   max-height: 320px;
   background: #000;
 }
+
+.welcome-mode {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  margin: 0.9rem 0 0.9rem;
+  background: var(--bg);
+}
+.welcome-mode legend {
+  padding: 0 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+.welcome-mode-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.welcome-mode-option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: border-color 120ms, background 120ms;
+}
+.welcome-mode-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.welcome-mode-option.chosen {
+  border-color: var(--base);
+  background: rgba(255, 169, 90, 0.12);
+}
+.welcome-mode-label { font-weight: 700; }
+.welcome-mode-blurb { font-size: 0.72rem; color: var(--muted); font-style: italic; }
 .welcome-modal button.primary {
   display: inline-block;
   margin-top: 0.4rem;

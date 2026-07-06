@@ -6,6 +6,7 @@ import {
   activeInstruments,
   instrumentsCache,
   setDomain,
+  setHoveredDomain,
 } from '../store';
 import { theme } from '../theme';
 import type { CognitionProfile, DomainId, Instrument } from '../types';
@@ -125,6 +126,9 @@ export function SoftRadar() {
         // Always assign — including resetting to null on a miss-click — so a
         // stale draggingDomain from a prior gesture can't keep moving a vertex.
         draggingDomain = id;
+        // Touch has no hover, so publish the grabbed vertex too — the caption
+        // then shows its description for the duration of the drag.
+        if (id) setHoveredDomain(id);
         if (id) return false;
         return true;
       };
@@ -140,6 +144,11 @@ export function SoftRadar() {
 
       p.mouseReleased = () => {
         draggingDomain = null;
+        // Only clear the caption target on touch — desktop keeps the hover
+        // state alive via mouseMoved.
+        if (window.matchMedia('(pointer: coarse)').matches) {
+          setHoveredDomain(null);
+        }
       };
 
       p.mouseMoved = () => {
@@ -148,6 +157,9 @@ export function SoftRadar() {
         const r = Math.min(p.width, p.height) * 0.36;
         hoverDomain = nearestDomain(p.mouseX, p.mouseY, cx, cy, r);
         containerRef!.style.cursor = hoverDomain ? 'grab' : 'default';
+        // Publish so the caption can show a plain-language description of
+        // whichever vertex is under the cursor.
+        setHoveredDomain(hoverDomain);
       };
 
       p.draw = () => {
@@ -267,5 +279,11 @@ export function SoftRadar() {
     resizeObs?.disconnect();
   });
 
-  return <div class="radar-host" ref={containerRef} />;
+  return (
+    <div
+      class="radar-host"
+      ref={containerRef}
+      onMouseLeave={() => setHoveredDomain(null)}
+    />
+  );
 }

@@ -1,6 +1,28 @@
 import type { Domain } from './types';
 
+// Vertex order is chosen so common neurodivergent profile dissociations sit
+// opposite each other, producing visible "wiggle" rather than a smooth circle:
+//   reading ↔ numbers   (dyslexia / dyscalculia)
+//   words   ↔ space     (verbal ↔ visuospatial dissociations)
+//   writing ↔ puzzles   (dyspraxic writing despite strong reasoning)
+//   focus   ↔ quick     (sustained attention vs processing speed)
+//   planning ↔ holding  (executive-function planning vs working memory)
+// A principled heuristic while population data is gathered — see the design log.
 export const DOMAINS: Domain[] = [
+  {
+    id: 'reading',
+    label: 'Reading',
+    clinicalTerm: 'WIAT Reading',
+    description: 'Meeting the written word.',
+    extendedDescription:
+      'From decoding to comprehension. Relative troughs may reflect dyslexia; audiobooks and text-to-speech can reorder the dependencies of literacy.',
+    citations: [
+      {
+        text: 'Snowling, M. J., & Hulme, C. (2011). Evidence-based interventions for reading and language difficulties: Creating a virtuous circle. British Journal of Educational Psychology, 81(1), 1–23.',
+        url: 'https://doi.org/10.1111/j.2044-8279.2010.02014.x',
+      },
+    ],
+  },
   {
     id: 'words',
     label: 'Words & language',
@@ -17,62 +39,18 @@ export const DOMAINS: Domain[] = [
     ],
   },
   {
-    id: 'space',
-    label: 'Space & pattern',
-    clinicalTerm: 'Visual-Spatial (WISC-V)',
-    description: 'Thinking in images and patterns — how things fit, move, and relate in space.',
+    id: 'writing',
+    label: 'Writing',
+    clinicalTerm: 'WIAT Written Expression',
+    description: 'Putting thought into written form, including handwriting.',
     extendedDescription:
-      'Mental imagery, visualisation, and part-whole relations. Strengths here often support design, engineering, map-reading, and certain kinds of mathematics that are really about configuration rather than calculation.',
-    citations: [
-      { text: 'Wechsler, D. (2014). WISC-V Technical and Interpretive Manual. Pearson.' },
-      {
-        text: 'Lohman, D. F. (1996). Spatial ability and g. In Dennis & Tapsfield (Eds.), Human abilities: Their nature and measurement. Lawrence Erlbaum.',
-      },
-    ],
-  },
-  {
-    id: 'puzzles',
-    label: 'Puzzles & reasoning',
-    clinicalTerm: 'Fluid Reasoning (WISC-V)',
-    description: 'Meeting unfamiliar problems and working out the shape of a solution.',
-    extendedDescription:
-      'Inductive and deductive inference on new material — making sense of patterns you have not been taught. Often relatively preserved in neurodivergent learners even when language or speed are costly.',
+      'Transcription (handwriting, spelling) is sometimes the bottleneck; composition may be strong but blocked by the physical act. Speech-to-text and structured templates can unpick these two processes.',
     citations: [
       {
-        text: 'Cattell, R. B. (1963). Theory of fluid and crystallized intelligence. Journal of Educational Psychology, 54(1), 1–22.',
-        url: 'https://doi.org/10.1037/h0046743',
+        text: 'Graham, S., & Perin, D. (2007). Writing next: Effective strategies to improve writing of adolescents in middle and high schools. Alliance for Excellent Education.',
       },
       {
-        text: 'Blair, C. (2006). How similar are fluid cognition and general intelligence? Behavioral and Brain Sciences, 29(2), 109–125.',
-        url: 'https://doi.org/10.1017/S0140525X06009034',
-      },
-    ],
-  },
-  {
-    id: 'holding',
-    label: 'Holding in mind',
-    clinicalTerm: 'Working Memory (WISC-V)',
-    description: 'Keeping ideas live and available while you work with them.',
-    extendedDescription:
-      'Maintaining and manipulating information over short time scales. A central bottleneck in many neurodivergent profiles — and where external scaffolds (notes, lists, dictation) pay off most quickly.',
-    citations: [
-      {
-        text: 'Baddeley, A. (2012). Working memory: Theories, models, and controversies. Annual Review of Psychology, 63, 1–29.',
-        url: 'https://doi.org/10.1146/annurev-psych-120710-100422',
-      },
-    ],
-  },
-  {
-    id: 'quick',
-    label: 'Quick thinking',
-    clinicalTerm: 'Processing Speed (WISC-V)',
-    description: 'How swiftly familiar thought becomes action.',
-    extendedDescription:
-      'Speed of routine cognitive operations on over-learned material. A lower score does not indicate a slower mind — it often means a different route to the same destination.',
-    citations: [
-      {
-        text: 'Kail, R., & Salthouse, T. A. (1994). Processing speed as a mental capacity. Acta Psychologica, 86(2–3), 199–225.',
-        url: 'https://doi.org/10.1016/0001-6918(94)90002-7',
+        text: 'Berninger, V. W., & Winn, W. D. (2006). Implications of advancements in brain research and technology for writing development. In MacArthur, Graham, & Fitzgerald (Eds.), Handbook of Writing Research. Guilford.',
       },
     ],
   },
@@ -105,36 +83,6 @@ export const DOMAINS: Domain[] = [
     ],
   },
   {
-    id: 'reading',
-    label: 'Reading',
-    clinicalTerm: 'WIAT Reading',
-    description: 'Meeting the written word.',
-    extendedDescription:
-      'From decoding to comprehension. Relative troughs may reflect dyslexia; audiobooks and text-to-speech can reorder the dependencies of literacy.',
-    citations: [
-      {
-        text: 'Snowling, M. J., & Hulme, C. (2011). Evidence-based interventions for reading and language difficulties: Creating a virtuous circle. British Journal of Educational Psychology, 81(1), 1–23.',
-        url: 'https://doi.org/10.1111/j.2044-8279.2010.02014.x',
-      },
-    ],
-  },
-  {
-    id: 'writing',
-    label: 'Writing',
-    clinicalTerm: 'WIAT Written Expression',
-    description: 'Putting thought into written form, including handwriting.',
-    extendedDescription:
-      'Transcription (handwriting, spelling) is sometimes the bottleneck; composition may be strong but blocked by the physical act. Speech-to-text and structured templates can unpick these two processes.',
-    citations: [
-      {
-        text: 'Graham, S., & Perin, D. (2007). Writing next: Effective strategies to improve writing of adolescents in middle and high schools. Alliance for Excellent Education.',
-      },
-      {
-        text: 'Berninger, V. W., & Winn, W. D. (2006). Implications of advancements in brain research and technology for writing development. In MacArthur, Graham, & Fitzgerald (Eds.), Handbook of Writing Research. Guilford.',
-      },
-    ],
-  },
-  {
     id: 'numbers',
     label: 'Numbers',
     clinicalTerm: 'WIAT Mathematics',
@@ -145,6 +93,66 @@ export const DOMAINS: Domain[] = [
       {
         text: 'Butterworth, B. (2010). Foundational numerical capacities and the origins of dyscalculia. Trends in Cognitive Sciences, 14(12), 534–541.',
         url: 'https://doi.org/10.1016/j.tics.2010.09.007',
+      },
+    ],
+  },
+  {
+    id: 'space',
+    label: 'Space & pattern',
+    clinicalTerm: 'Visual-Spatial (WISC-V)',
+    description: 'Thinking in images and patterns — how things fit, move, and relate in space.',
+    extendedDescription:
+      'Mental imagery and spatial reasoning cover both still and moving imagery — some minds hold a static picture in mind, others can only hold objects in motion. Strengths here often support design, engineering, map-reading, and configuration-heavy mathematics.',
+    citations: [
+      { text: 'Wechsler, D. (2014). WISC-V Technical and Interpretive Manual. Pearson.' },
+      {
+        text: 'Lohman, D. F. (1996). Spatial ability and g. In Dennis & Tapsfield (Eds.), Human abilities: Their nature and measurement. Lawrence Erlbaum.',
+      },
+    ],
+  },
+  {
+    id: 'puzzles',
+    label: 'Puzzles & reasoning',
+    clinicalTerm: 'Fluid Reasoning (WISC-V)',
+    description: 'Meeting unfamiliar problems and working out the shape of a solution.',
+    extendedDescription:
+      'Inductive and deductive inference on new material — making sense of patterns you have not been taught. Often relatively preserved in neurodivergent learners even when language or speed are costly.',
+    citations: [
+      {
+        text: 'Cattell, R. B. (1963). Theory of fluid and crystallized intelligence. Journal of Educational Psychology, 54(1), 1–22.',
+        url: 'https://doi.org/10.1037/h0046743',
+      },
+      {
+        text: 'Blair, C. (2006). How similar are fluid cognition and general intelligence? Behavioral and Brain Sciences, 29(2), 109–125.',
+        url: 'https://doi.org/10.1017/S0140525X06009034',
+      },
+    ],
+  },
+  {
+    id: 'quick',
+    label: 'Quick thinking',
+    clinicalTerm: 'Processing Speed (WISC-V)',
+    description: 'How swiftly familiar thought becomes action.',
+    extendedDescription:
+      'Speed of routine cognitive operations on over-learned material. A lower score does not indicate a slower mind — it often means a different route to the same destination.',
+    citations: [
+      {
+        text: 'Kail, R., & Salthouse, T. A. (1994). Processing speed as a mental capacity. Acta Psychologica, 86(2–3), 199–225.',
+        url: 'https://doi.org/10.1016/0001-6918(94)90002-7',
+      },
+    ],
+  },
+  {
+    id: 'holding',
+    label: 'Holding in mind',
+    clinicalTerm: 'Working Memory (WISC-V)',
+    description: 'Keeping ideas live and available while you work with them.',
+    extendedDescription:
+      'Maintaining and manipulating information over short time scales. A central bottleneck in many neurodivergent profiles — and where external scaffolds (notes, lists, dictation) pay off most quickly.',
+    citations: [
+      {
+        text: 'Baddeley, A. (2012). Working memory: Theories, models, and controversies. Annual Review of Psychology, 63, 1–29.',
+        url: 'https://doi.org/10.1146/annurev-psych-120710-100422',
       },
     ],
   },
