@@ -1,6 +1,10 @@
 @font-face {
   font-family: 'Poster Boy';
-  src: url('/fonts/PosterBoy.otf') format('opentype');
+  /* woff2 (~39KB) first; the original OTF (~97KB) stays as a fallback for
+     the rare browser without woff2 support. */
+  src:
+    url('/fonts/PosterBoy.woff2') format('woff2'),
+    url('/fonts/PosterBoy.otf') format('opentype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
