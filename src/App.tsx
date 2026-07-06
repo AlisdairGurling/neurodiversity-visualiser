@@ -5,7 +5,6 @@ import { Toolbar } from './components/Toolbar';
 import { ImportPanel } from './components/ImportPanel';
 import { WelcomeModal } from './components/WelcomeModal';
 import { Stepper } from './components/Stepper';
-import { RevealPlaceholder } from './components/RevealPlaceholder';
 import {
   activateInstrument,
   applyProfilePatch,
@@ -56,21 +55,38 @@ export function App() {
       </header>
       <Stepper />
       <div class="app-body" data-stage={stage()}>
-        <aside
-          class="sliders"
-          data-mobile-hidden={stage() === 'extend' && mobilePane() !== 'sliders'}
+        <Show
+          when={stage() !== 'answer'}
+          fallback={
+            <div class="answer-stage">
+              <div class="answer-preamble">
+                <div class="placeholder-orb" aria-hidden="true">
+                  <div class="orb-inner" />
+                  <div class="orb-halo" />
+                </div>
+                <h3>Your shape is taking form.</h3>
+                <p>
+                  The canvas is quiet on purpose. Answer whatever prompts feel true —
+                  or drop a PDF, or describe in words — without watching the shape
+                  react. There is no right answer.
+                </p>
+              </div>
+              <ImportPanel />
+              <button
+                type="button"
+                class="stage-forward primary"
+                onClick={() => setStage('reveal')}
+              >
+                ✨ Reveal my shape
+              </button>
+            </div>
+          }
         >
-          <ImportPanel />
-          <Show when={stage() === 'answer'}>
-            <button
-              type="button"
-              class="stage-forward primary"
-              onClick={() => setStage('reveal')}
-            >
-              ✨ Reveal my shape
-            </button>
-          </Show>
-          <Show when={stage() === 'reveal'}>
+          <aside
+            class="sliders"
+            data-mobile-hidden={stage() === 'extend' && mobilePane() !== 'sliders'}
+          >
+            <ImportPanel />
             <div class="stage-forward-row">
               <button
                 type="button"
@@ -79,44 +95,41 @@ export function App() {
               >
                 ← Back to answering
               </button>
-              <button
-                type="button"
-                class="stage-forward primary"
-                onClick={() => setStage('extend')}
-              >
-                🌱 Extend with instruments
-              </button>
+              <Show when={stage() === 'reveal'}>
+                <button
+                  type="button"
+                  class="stage-forward primary"
+                  onClick={() => setStage('extend')}
+                >
+                  🌱 Extend with instruments
+                </button>
+              </Show>
             </div>
-          </Show>
-        </aside>
+          </aside>
 
-        <main
-          class={`canvas-pane ${dropHint() ? 'drop-ready' : ''}`}
-          onDragEnter={(e) => {
-            e.preventDefault();
-            if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
-            setDropHint(true);
-          }}
-          onDragOver={(e) => {
-            e.preventDefault();
-            if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
-            setDropHint(true);
-          }}
-          onDragLeave={(e) => {
-            const related = e.relatedTarget as Node | null;
-            if (related && (e.currentTarget as Node).contains(related)) return;
-            setDropHint(false);
-          }}
-          onDrop={(e) => {
-            e.preventDefault();
-            const id = e.dataTransfer?.getData('text/plain');
-            if (id) activateInstrument(id);
-            setDropHint(false);
-          }}
-        >
-          <Show
-            when={stage() !== 'answer'}
-            fallback={<RevealPlaceholder />}
+          <main
+            class={`canvas-pane ${dropHint() ? 'drop-ready' : ''}`}
+            onDragEnter={(e) => {
+              e.preventDefault();
+              if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+              setDropHint(true);
+            }}
+            onDragOver={(e) => {
+              e.preventDefault();
+              if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+              setDropHint(true);
+            }}
+            onDragLeave={(e) => {
+              const related = e.relatedTarget as Node | null;
+              if (related && (e.currentTarget as Node).contains(related)) return;
+              setDropHint(false);
+            }}
+            onDrop={(e) => {
+              e.preventDefault();
+              const id = e.dataTransfer?.getData('text/plain');
+              if (id) activateInstrument(id);
+              setDropHint(false);
+            }}
           >
             <SoftRadar />
             <Show when={dropHint()}>
@@ -149,40 +162,40 @@ export function App() {
                 }}
               </Show>
             </p>
-          </Show>
-        </main>
+          </main>
 
-        <Show when={stage() === 'extend'}>
-          <div class="mobile-tabs" role="tablist" aria-label="Mobile panel selector">
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mobilePane() === 'sliders'}
-              class={mobilePane() === 'sliders' ? 'active' : ''}
-              onClick={() => setMobilePane('sliders')}
+          <Show when={stage() === 'extend'}>
+            <div class="mobile-tabs" role="tablist" aria-label="Mobile panel selector">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mobilePane() === 'sliders'}
+                class={mobilePane() === 'sliders' ? 'active' : ''}
+                onClick={() => setMobilePane('sliders')}
+              >
+                📝 Cognition
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={mobilePane() === 'instruments'}
+                class={mobilePane() === 'instruments' ? 'active' : ''}
+                onClick={() => setMobilePane('instruments')}
+              >
+                🌱 Instruments
+              </button>
+            </div>
+            <aside
+              class="instruments"
+              data-mobile-hidden={mobilePane() !== 'instruments'}
             >
-              📝 Cognition
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={mobilePane() === 'instruments'}
-              class={mobilePane() === 'instruments' ? 'active' : ''}
-              onClick={() => setMobilePane('instruments')}
-            >
-              🌱 Instruments
-            </button>
-          </div>
-          <aside
-            class="instruments"
-            data-mobile-hidden={mobilePane() !== 'instruments'}
-          >
-            <h2>
-              <span class="section-icon" aria-hidden="true">🌱</span>
-              Instruments of change
-            </h2>
-            <InstrumentPalette />
-          </aside>
+              <h2>
+                <span class="section-icon" aria-hidden="true">🌱</span>
+                Instruments of change
+              </h2>
+              <InstrumentPalette />
+            </aside>
+          </Show>
         </Show>
       </div>
       <footer class="app-footer">
