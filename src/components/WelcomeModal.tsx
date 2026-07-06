@@ -9,16 +9,18 @@ const MODES: { id: ExperienceMode; label: string; blurb: string }[] = [
   { id: 'sound', label: 'Sound-first', blurb: 'Prompts can be read aloud.' },
 ];
 
-// Drop a file into public/videos/ at these paths to populate the welcome
-// video. The fetch HEAD-check below means the placeholder is shown until a
-// real file is present, with no console error noise.
+// To publish the welcome video: drop the files into public/videos/ at the
+// paths below, then flip SHOW_WELCOME_VIDEO to true. A constant (rather than
+// a runtime probe) keeps the network tab free of 404s while the files don't
+// exist yet — browsers log failed requests to the console regardless of any
+// JS-side handling, and Lighthouse flags them.
+const SHOW_WELCOME_VIDEO = false;
+const SHOW_POSTER = false;
 const VIDEO_PATH = '/videos/welcome.mp4';
 const POSTER_PATH = '/videos/welcome-poster.jpg';
 
 export function WelcomeModal() {
   const [open, setOpen] = createSignal(false);
-  const [hasVideo, setHasVideo] = createSignal(false);
-  const [hasPoster, setHasPoster] = createSignal(false);
   let modalRef: HTMLDivElement | undefined;
   let lastFocused: HTMLElement | null = null;
 
@@ -26,22 +28,6 @@ export function WelcomeModal() {
     if (!localStorage.getItem(STORAGE_KEY)) {
       setOpen(true);
     }
-    // Probe asset availability so we can degrade gracefully when files aren't
-    // there yet. Check the content-type as well as r.ok: dev servers (and some
-    // hosts) answer unknown paths with the SPA's index.html and a 200, which
-    // would otherwise light up a broken <video>.
-    fetch(VIDEO_PATH, { method: 'HEAD' })
-      .then((r) => {
-        const type = r.headers.get('content-type') ?? '';
-        if (r.ok && type.startsWith('video/')) setHasVideo(true);
-      })
-      .catch(() => {});
-    fetch(POSTER_PATH, { method: 'HEAD' })
-      .then((r) => {
-        const type = r.headers.get('content-type') ?? '';
-        if (r.ok && type.startsWith('image/')) setHasPoster(true);
-      })
-      .catch(() => {});
   });
 
   // Lock body scroll while the modal is up — without this, mobile (and some
@@ -147,7 +133,7 @@ export function WelcomeModal() {
           </p>
 
           <Show
-            when={hasVideo()}
+            when={SHOW_WELCOME_VIDEO}
             fallback={
               <div class="welcome-video-slot">
                 <span>A short video introduction will live here.</span>
@@ -159,7 +145,7 @@ export function WelcomeModal() {
                 controls
                 preload="metadata"
                 playsinline
-                poster={hasPoster() ? POSTER_PATH : undefined}
+                poster={SHOW_POSTER ? POSTER_PATH : undefined}
               >
                 <source src={VIDEO_PATH} type="video/mp4" />
               </video>

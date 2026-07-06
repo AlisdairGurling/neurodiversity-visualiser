@@ -1,5 +1,4 @@
-import { createSignal, onMount, Show } from 'solid-js';
-import { SoftRadar } from './components/SoftRadar';
+import { createSignal, lazy, onMount, Show, Suspense } from 'solid-js';
 import { InstrumentPalette } from './components/InstrumentPalette';
 import { Toolbar } from './components/Toolbar';
 import { ImportPanel } from './components/ImportPanel';
@@ -19,6 +18,12 @@ import {
 import { DOMAINS } from './domains';
 import { decodeShare } from './share';
 import { applyTheme, theme } from './theme';
+
+// The radar pulls in p5 (~200KB gzipped) but isn't rendered during the Answer
+// stage, so it loads lazily — first paint of the landing view stays light.
+const SoftRadar = lazy(() =>
+  import('./components/SoftRadar').then((m) => ({ default: m.SoftRadar })),
+);
 
 type MobilePane = 'sliders' | 'instruments';
 
@@ -136,7 +141,9 @@ export function App() {
               setDropHint(false);
             }}
           >
-            <SoftRadar />
+            <Suspense fallback={<div class="radar-host" aria-hidden="true" />}>
+              <SoftRadar />
+            </Suspense>
             <Show when={dropHint()}>
               <div class="drop-overlay">
                 <p>Drop to layer this instrument</p>

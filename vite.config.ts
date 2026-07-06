@@ -9,4 +9,9 @@ export default defineConfig({
     port: envPort ?? 5173,
     open: !process.env.PORT,
   },
+  build: {
+    // Published source maps: the project is open-source, they aid debugging
+    // in production, and Lighthouse flags large scripts without them.
+    sourcemap: true,
+  },
 });
