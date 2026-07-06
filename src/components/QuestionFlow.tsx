@@ -29,17 +29,40 @@ function speak(text: string) {
   window.speechSynthesis.speak(utter);
 }
 
+function questionHasAnswer(qId: string, selections: ReadonlySet<string>) {
+  for (const key of selections) if (key.startsWith(`${qId}/`)) return true;
+  return false;
+}
+
 export function QuestionFlow() {
-  const [openId, setOpenId] = createSignal<string | null>(null);
+  // Multiple questions can be open at once so users can go back to add or
+  // remove options in earlier questions without losing their place. The very
+  // first question opens by default so there's always somewhere to start.
+  const [openIds, setOpenIds] = createSignal<Set<string>>(
+    new Set(QUESTIONS[0] ? [QUESTIONS[0].id] : []),
+  );
   const soundOn = () => experienceMode() === 'sound';
   const wordFirst = () => experienceMode() === 'word';
+
+  const isOpen = (q: Question) => wordFirst() || openIds().has(q.id);
 
   const isPicked = (q: Question, opt: QuestionOption) =>
     questionSelections().has(`${q.id}/${opt.id}`);
 
+  function toggleOpen(id: string) {
+    const next = new Set(openIds());
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setOpenIds(next);
+  }
+
   function toggle(q: Question, opt: QuestionOption) {
     const key = `${q.id}/${opt.id}`;
-    const next = new Set(questionSelections());
+    const prev = questionSelections();
+    const previouslyAnswered = questionHasAnswer(q.id, prev);
+    const adding = !prev.has(key);
+
+    const next = new Set(prev);
     if (next.has(key)) {
       next.delete(key);
       applyLifts(opt, -1);
@@ -48,6 +71,28 @@ export function QuestionFlow() {
       applyLifts(opt, 1);
     }
     setQuestionSelections(next);
+
+    // When the user gives a question its first answer, open the next
+    // unanswered question so the flow keeps moving forward. The current
+    // question stays open — multi-select is preserved and the user can
+    // continue adding to it.
+    if (adding && !previouslyAnswered) {
+      const idx = QUESTIONS.findIndex((qq) => qq.id === q.id);
+      const nextQ = QUESTIONS.slice(idx + 1).find(
+        (qq) => !questionHasAnswer(qq.id, next),
+      );
+      if (nextQ) {
+        const openNext = new Set(openIds());
+        openNext.add(nextQ.id);
+        setOpenIds(openNext);
+        requestAnimationFrame(() => {
+          const el = document.querySelector(
+            `[data-question-id="${nextQ.id}"]`,
+          ) as HTMLElement | null;
+          el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+    }
   }
 
   function clearAll() {
@@ -58,6 +103,7 @@ export function QuestionFlow() {
       }
     }
     setQuestionSelections(new Set<string>());
+    setOpenIds(new Set(QUESTIONS[0] ? [QUESTIONS[0].id] : []));
   }
 
   function readWhole(q: Question) {
@@ -69,9 +115,8 @@ export function QuestionFlow() {
   return (
     <div class="question-flow">
       <p class="question-intro">
-        Pick whatever feels true. There is no order, no scoring, no right answer
-        — each choice nudges the shape on the canvas. The prompts cover all ten
-        domains and lean towards how neurodivergent minds tend to be strong.
+        Pick whatever feels true. There is no order, no scoring, no right answer.
+        Answering a question opens the next one — you can always go back.
       </p>
 
       <details class="question-about" open={wordFirst() || undefined}>
@@ -103,12 +148,12 @@ export function QuestionFlow() {
       <div class="question-grid">
         <For each={QUESTIONS}>
           {(q) => {
-            const isOpen = () => openId() === q.id || wordFirst();
             const answeredCount = () =>
               q.options.filter((o) => questionSelections().has(`${q.id}/${o.id}`)).length;
             return (
               <div
-                class={`question-card ${isOpen() ? 'open' : ''} ${
+                data-question-id={q.id}
+                class={`question-card ${isOpen(q) ? 'open' : ''} ${
                   answeredCount() > 0 ? 'answered' : ''
                 }`}
               >
@@ -116,8 +161,8 @@ export function QuestionFlow() {
                   <button
                     type="button"
                     class="question-head"
-                    onClick={() => setOpenId(openId() === q.id ? null : q.id)}
-                    aria-expanded={isOpen()}
+                    onClick={() => toggleOpen(q.id)}
+                    aria-expanded={isOpen(q)}
                   >
                     <span class="question-prompt">{q.prompt}</span>
                     <Show when={answeredCount() > 0}>
@@ -138,7 +183,7 @@ export function QuestionFlow() {
                     </button>
                   </Show>
                 </div>
-                <Show when={isOpen()}>
+                <Show when={isOpen(q)}>
                   <div class="question-body">
                     <Show when={q.hint}>
                       <p class="question-hint">{q.hint}</p>

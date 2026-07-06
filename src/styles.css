@@ -500,6 +500,20 @@ input[type="range"] {
   flex-wrap: wrap;
 }
 .app-footer .footer-note { font-style: italic; }
+.app-footer .footer-link {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.app-footer .footer-link:hover { color: var(--fg); }
 
 /* "Build the shape" panel — primary surface of the left sidebar */
 .build-panel {
@@ -552,6 +566,11 @@ input[type="range"] {
   background: var(--card);
   border-bottom: 1px solid var(--border);
   padding: 0.5rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 .stepper ol {
   display: flex;
@@ -561,6 +580,23 @@ input[type="range"] {
   list-style: none;
   align-items: center;
   flex-wrap: wrap;
+}
+.stepper-continue {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--base);
+  background: var(--base);
+  color: #fff;
+  border-radius: 999px;
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 120ms, transform 120ms;
+}
+.stepper-continue:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
 }
 .stepper .step { flex: 0 0 auto; }
 .stepper .step button {

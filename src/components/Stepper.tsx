@@ -1,15 +1,24 @@
-import { For } from 'solid-js';
+import { For, Show } from 'solid-js';
 import { setStage, stage, type Stage } from '../store';
 
-const STEPS: { id: Stage; label: string; icon: string; hint: string }[] = [
-  { id: 'answer', label: 'Answer', icon: '📝', hint: 'Build the shape from prompts, a PDF, or a description.' },
-  { id: 'reveal', label: 'Reveal', icon: '✨', hint: 'See the shape emerge; fine-tune the sliders.' },
-  { id: 'extend', label: 'Extend', icon: '🌱', hint: 'Layer instruments of change to extend the cognition.' },
+const STEPS: { id: Stage; label: string; hint: string }[] = [
+  { id: 'answer', label: 'Answer', hint: 'Build the shape from prompts, a PDF, or a description.' },
+  { id: 'reveal', label: 'Reveal', hint: 'See the shape emerge; fine-tune the sliders.' },
+  { id: 'extend', label: 'Extend', hint: 'Layer instruments of change to extend the cognition.' },
 ];
 
 const INDEX: Record<Stage, number> = { answer: 0, reveal: 1, extend: 2 };
+const NEXT: Record<Stage, Stage | null> = {
+  answer: 'reveal',
+  reveal: 'extend',
+  extend: null,
+};
 
 export function Stepper() {
+  const nextStage = () => NEXT[stage()];
+  const nextLabel = () =>
+    nextStage() ? STEPS[INDEX[nextStage()!]].label : null;
+
   return (
     <nav class="stepper" aria-label="Stages">
       <ol>
@@ -30,9 +39,6 @@ export function Stepper() {
                   <span class="step-number" aria-hidden="true">
                     {i() + 1}
                   </span>
-                  <span class="step-icon" aria-hidden="true">
-                    {step.icon}
-                  </span>
                   <span class="step-label">{step.label}</span>
                 </button>
               </li>
@@ -40,6 +46,15 @@ export function Stepper() {
           }}
         </For>
       </ol>
+      <Show when={nextStage()}>
+        <button
+          type="button"
+          class="stepper-continue"
+          onClick={() => setStage(nextStage()!)}
+        >
+          Continue to {nextLabel()} →
+        </button>
+      </Show>
     </nav>
   );
 }

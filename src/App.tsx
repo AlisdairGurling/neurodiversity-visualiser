@@ -77,7 +77,7 @@ export function App() {
                 class="stage-forward primary"
                 onClick={() => setStage('reveal')}
               >
-                ✨ Reveal my shape
+                Reveal my shape →
               </button>
             </div>
           }
@@ -101,7 +101,7 @@ export function App() {
                   class="stage-forward primary"
                   onClick={() => setStage('extend')}
                 >
-                  🌱 Extend with instruments
+                  Extend with instruments →
                 </button>
               </Show>
             </div>
@@ -173,7 +173,7 @@ export function App() {
                 class={mobilePane() === 'sliders' ? 'active' : ''}
                 onClick={() => setMobilePane('sliders')}
               >
-                📝 Cognition
+                Cognition
               </button>
               <button
                 type="button"
@@ -182,17 +182,14 @@ export function App() {
                 class={mobilePane() === 'instruments' ? 'active' : ''}
                 onClick={() => setMobilePane('instruments')}
               >
-                🌱 Instruments
+                Instruments
               </button>
             </div>
             <aside
               class="instruments"
               data-mobile-hidden={mobilePane() !== 'instruments'}
             >
-              <h2>
-                <span class="section-icon" aria-hidden="true">🌱</span>
-                Instruments of change
-              </h2>
+              <h2>Instruments of change</h2>
               <InstrumentPalette />
             </aside>
           </Show>
@@ -203,6 +200,15 @@ export function App() {
         <span class="footer-note">
           Part of doctoral research into neurodivergent learning and instruments of change.
         </span>
+        <button
+          type="button"
+          class="footer-link"
+          onClick={() =>
+            (window as unknown as { showWelcome?: () => void }).showWelcome?.()
+          }
+        >
+          Show intro again
+        </button>
       </footer>
     </div>
   );
