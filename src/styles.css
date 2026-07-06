@@ -601,6 +601,11 @@ input[type="range"] {
   text-underline-offset: 3px;
 }
 .app-footer .footer-link:hover { color: var(--fg); }
+.app-footer .footer-actions {
+  display: inline-flex;
+  gap: 1rem;
+  align-items: baseline;
+}
 
 /* "Build the shape" panel — primary surface of the left sidebar */
 .build-panel {
@@ -1083,6 +1088,10 @@ input[type="range"] {
   border-radius: 6px;
 }
 .question-listen:hover { color: var(--accent); background: var(--accent-soft); }
+.question-listen[aria-pressed="true"] {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
 
 .question-about {
   border: 1px solid var(--border);

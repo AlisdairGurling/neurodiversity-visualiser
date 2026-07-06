@@ -1,4 +1,4 @@
-import { createSignal, For, Show } from 'solid-js';
+import { createSignal, For, onCleanup, Show } from 'solid-js';
 import {
   QUESTIONS,
   QUESTION_CITATIONS,
@@ -21,13 +21,8 @@ function applyLifts(opt: QuestionOption, sign: 1 | -1) {
   }
 }
 
-function speak(text: string) {
-  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.rate = 0.95;
-  window.speechSynthesis.speak(utter);
-}
+const speechAvailable =
+  typeof window !== 'undefined' && 'speechSynthesis' in window;
 
 function questionHasAnswer(qId: string, selections: ReadonlySet<string>) {
   for (const key of selections) if (key.startsWith(`${qId}/`)) return true;
@@ -41,8 +36,36 @@ export function QuestionFlow() {
   const [openIds, setOpenIds] = createSignal<Set<string>>(
     new Set(QUESTIONS[0] ? [QUESTIONS[0].id] : []),
   );
-  const soundOn = () => experienceMode() === 'sound';
   const wordFirst = () => experienceMode() === 'word';
+
+  // Which question is currently being read aloud (null when quiet). Reading
+  // is available to everyone, not only the sound-first mode — the mode just
+  // changes emphasis elsewhere.
+  const [speakingId, setSpeakingId] = createSignal<string | null>(null);
+
+  function stopSpeaking() {
+    if (speechAvailable) window.speechSynthesis.cancel();
+    setSpeakingId(null);
+  }
+
+  function readWhole(q: Question) {
+    if (!speechAvailable) return;
+    if (speakingId() === q.id) {
+      stopSpeaking();
+      return;
+    }
+    window.speechSynthesis.cancel();
+    const optionText = q.options.map((o) => o.label).join('. ');
+    const full = `${q.prompt}${q.hint ? '. ' + q.hint : ''}. Options: ${optionText}.`;
+    const utter = new SpeechSynthesisUtterance(full);
+    utter.rate = 0.95;
+    utter.onend = () => setSpeakingId((cur) => (cur === q.id ? null : cur));
+    utter.onerror = () => setSpeakingId((cur) => (cur === q.id ? null : cur));
+    setSpeakingId(q.id);
+    window.speechSynthesis.speak(utter);
+  }
+
+  onCleanup(stopSpeaking);
 
   const isOpen = (q: Question) => wordFirst() || openIds().has(q.id);
 
@@ -107,12 +130,6 @@ export function QuestionFlow() {
     setOpenIds(new Set(QUESTIONS[0] ? [QUESTIONS[0].id] : []));
   }
 
-  function readWhole(q: Question) {
-    const optionText = q.options.map((o) => o.label).join('. ');
-    const full = `${q.prompt}${q.hint ? '. ' + q.hint : ''}. Options: ${optionText}.`;
-    speak(full);
-  }
-
   return (
     <div class="question-flow">
       <p class="question-intro">
@@ -172,15 +189,22 @@ export function QuestionFlow() {
                       </span>
                     </Show>
                   </button>
-                  <Show when={soundOn()}>
+                  <Show when={speechAvailable}>
                     <button
                       type="button"
                       class="question-listen"
                       onClick={() => readWhole(q)}
-                      aria-label={`Read "${q.prompt}" aloud`}
-                      title="Read aloud"
+                      aria-pressed={speakingId() === q.id}
+                      aria-label={
+                        speakingId() === q.id
+                          ? `Stop reading "${q.prompt}"`
+                          : `Read "${q.prompt}" and its options aloud`
+                      }
+                      title={speakingId() === q.id ? 'Stop reading' : 'Read aloud'}
                     >
-                      🔊
+                      <Show when={speakingId() === q.id} fallback="🔊">
+                        ⏹
+                      </Show>
                     </button>
                   </Show>
                 </div>

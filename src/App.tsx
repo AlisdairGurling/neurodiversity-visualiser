@@ -10,9 +10,11 @@ import {
   applyProfilePatch,
   hoveredDomain,
   loadInstruments,
+  motionPaused,
   setActiveInstruments,
   setStage,
   stage,
+  toggleMotionPaused,
 } from './store';
 import { DOMAINS } from './domains';
 import { decodeShare } from './share';
@@ -203,15 +205,30 @@ export function App() {
         <span class="footer-note">
           Part of doctoral research into neurodivergent learning and instruments of change.
         </span>
-        <button
-          type="button"
-          class="footer-link"
-          onClick={() =>
-            (window as unknown as { showWelcome?: () => void }).showWelcome?.()
-          }
-        >
-          Show intro again
-        </button>
+        <span class="footer-actions">
+          <button
+            type="button"
+            class="footer-link"
+            onClick={toggleMotionPaused}
+            aria-pressed={motionPaused()}
+            title={
+              motionPaused()
+                ? 'Resume the gentle motion of the shape'
+                : 'Pause the gentle motion of the shape'
+            }
+          >
+            {motionPaused() ? 'Play motion' : 'Pause motion'}
+          </button>
+          <button
+            type="button"
+            class="footer-link"
+            onClick={() =>
+              (window as unknown as { showWelcome?: () => void }).showWelcome?.()
+            }
+          >
+            Show intro again
+          </button>
+        </span>
       </footer>
     </div>
   );

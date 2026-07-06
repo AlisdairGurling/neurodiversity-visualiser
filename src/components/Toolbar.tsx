@@ -1,11 +1,5 @@
 import { createSignal, Show } from 'solid-js';
-import {
-  activeInstruments,
-  motionPaused,
-  resetAll,
-  snapshotProfile,
-  toggleMotionPaused,
-} from '../store';
+import { activeInstruments, resetAll, snapshotProfile } from '../store';
 import { buildShareUrl } from '../share';
 import { theme, toggleTheme } from '../theme';
 
@@ -53,20 +47,6 @@ export function Toolbar() {
         <button type="button" onClick={copyShareLink}>
           <Show when={copied()} fallback="Copy share link">
             Copied!
-          </Show>
-        </button>
-        <button
-          type="button"
-          onClick={toggleMotionPaused}
-          aria-pressed={motionPaused()}
-          title={
-            motionPaused()
-              ? 'Resume the gentle motion of the shape'
-              : 'Pause the gentle motion of the shape'
-          }
-        >
-          <Show when={motionPaused()} fallback="Pause motion">
-            Play motion
           </Show>
         </button>
         <button
