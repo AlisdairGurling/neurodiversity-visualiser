@@ -19,20 +19,27 @@ export function WelcomeModal() {
   const [open, setOpen] = createSignal(false);
   const [hasVideo, setHasVideo] = createSignal(false);
   const [hasPoster, setHasPoster] = createSignal(false);
+  let modalRef: HTMLDivElement | undefined;
+  let lastFocused: HTMLElement | null = null;
 
   onMount(() => {
     if (!localStorage.getItem(STORAGE_KEY)) {
       setOpen(true);
     }
-    // Probe asset availability so we can degrade gracefully when files aren't there yet.
+    // Probe asset availability so we can degrade gracefully when files aren't
+    // there yet. Check the content-type as well as r.ok: dev servers (and some
+    // hosts) answer unknown paths with the SPA's index.html and a 200, which
+    // would otherwise light up a broken <video>.
     fetch(VIDEO_PATH, { method: 'HEAD' })
       .then((r) => {
-        if (r.ok) setHasVideo(true);
+        const type = r.headers.get('content-type') ?? '';
+        if (r.ok && type.startsWith('video/')) setHasVideo(true);
       })
       .catch(() => {});
     fetch(POSTER_PATH, { method: 'HEAD' })
       .then((r) => {
-        if (r.ok) setHasPoster(true);
+        const type = r.headers.get('content-type') ?? '';
+        if (r.ok && type.startsWith('image/')) setHasPoster(true);
       })
       .catch(() => {});
   });
@@ -40,11 +47,14 @@ export function WelcomeModal() {
   // Lock body scroll while the modal is up — without this, mobile (and some
   // desktop browsers) let touch/scroll bleed through the backdrop, which can
   // cause the underlying page to drift to a non-top scroll position on first
-  // visit.
+  // visit. Also move focus into the dialog (WCAG 2.4.3) and remember where it
+  // came from so dismissal can restore it.
   createEffect(() => {
     if (open()) {
       const previous = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
+      lastFocused = document.activeElement as HTMLElement | null;
+      queueMicrotask(() => modalRef?.focus());
       onCleanup(() => {
         document.body.style.overflow = previous;
       });
@@ -54,15 +64,41 @@ export function WelcomeModal() {
   function dismiss() {
     localStorage.setItem(STORAGE_KEY, '1');
     setOpen(false);
+    lastFocused?.focus();
     // Snap the page back to the top in case anything scrolled it while the
     // modal was up.
     requestAnimationFrame(() => window.scrollTo(0, 0));
   }
 
+  // Keep Tab cycling inside the dialog while it's open (no keyboard trap
+  // outside it, WCAG 2.1.2), and let Escape close it.
+  function onKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      dismiss();
+      return;
+    }
+    if (e.key !== 'Tab' || !modalRef) return;
+    const focusables = modalRef.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, video[controls], [tabindex]:not([tabindex="-1"])',
+    );
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey && (active === first || active === modalRef)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
   function reopen() {
     setOpen(true);
   }
-  // Expose a way for elsewhere in the app to reopen the modal (e.g. a future "show the intro again" link).
+  // Expose a way for elsewhere in the app to reopen the modal (e.g. the footer's "Show intro again" link).
   (window as unknown as { showWelcome?: () => void }).showWelcome = reopen;
 
   return (
@@ -73,7 +109,10 @@ export function WelcomeModal() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="welcome-title"
+          tabindex="-1"
+          ref={modalRef}
           onClick={(e) => e.stopPropagation()}
+          onKeyDown={onKeyDown}
         >
           <h2 id="welcome-title">Welcome</h2>
 
@@ -110,7 +149,7 @@ export function WelcomeModal() {
           <Show
             when={hasVideo()}
             fallback={
-              <div class="welcome-video-slot" aria-hidden="true">
+              <div class="welcome-video-slot">
                 <span>A short video introduction will live here.</span>
               </div>
             }

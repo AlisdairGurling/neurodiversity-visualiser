@@ -38,6 +38,23 @@ export function setHoveredDomain(d: DomainId | null) {
   setHoveredDomainSignal(d);
 }
 
+// Motion control (WCAG 2.2.2 pause/stop/hide + 2.3.3). Defaults to paused when
+// the OS asks for reduced motion; the toolbar toggle overrides and persists.
+const MOTION_KEY = 'nv.motionPaused';
+function loadMotionPaused(): boolean {
+  const v = localStorage.getItem(MOTION_KEY);
+  if (v === '1') return true;
+  if (v === '0') return false;
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+}
+const [motionPausedSignal, setMotionPausedSignal] = createSignal<boolean>(loadMotionPaused());
+export const motionPaused = motionPausedSignal;
+export function toggleMotionPaused() {
+  const next = !motionPausedSignal();
+  setMotionPausedSignal(next);
+  localStorage.setItem(MOTION_KEY, next ? '1' : '0');
+}
+
 // User's preferred way of exploring — visual (default radar), word (auto-expanded
 // text descriptions), or sound (spoken narration via SpeechSynthesis).
 export type ExperienceMode = 'visual' | 'word' | 'sound';

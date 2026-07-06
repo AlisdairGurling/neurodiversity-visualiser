@@ -87,10 +87,12 @@ export function InstrumentPalette() {
       </ul>
 
       <Show when={instrumentsLoadStatus() === 'loading'}>
-        <p class="palette-status">Loading instruments…</p>
+        <p class="palette-status" role="status">
+          Loading instruments…
+        </p>
       </Show>
       <Show when={instrumentsLoadStatus() === 'error'}>
-        <div class="palette-status palette-error">
+        <div class="palette-status palette-error" role="alert">
           <p>Couldn't load instruments: {instrumentsLoadError()}</p>
           <button type="button" onClick={() => loadInstruments()}>
             Retry
@@ -126,7 +128,9 @@ export function InstrumentPalette() {
                         <span
                           class={`tool-line tool-line-${inst.toolLine}`}
                           title={TOOL_LINE_LABEL[inst.toolLine]}
+                          aria-hidden="true"
                         />
+                        <span class="sr-only">{TOOL_LINE_LABEL[inst.toolLine]}.</span>
                         <span class="instrument-body">
                           <span class="instrument-head">
                             <span class="instrument-name">

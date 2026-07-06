@@ -68,10 +68,12 @@ export function FreeTextImport() {
         {busy() ? 'Extracting…' : 'Extract with Claude'}
       </button>
       <Show when={error()}>
-        <p class="import-error">{error()}</p>
+        <p class="import-error" role="alert">
+          {error()}
+        </p>
       </Show>
       <Show when={updated().length > 0}>
-        <p class="import-result">
+        <p class="import-result" role="status">
           Updated: {updated().map((id) => DOMAIN_LABEL.get(id)).join(', ')}
         </p>
       </Show>

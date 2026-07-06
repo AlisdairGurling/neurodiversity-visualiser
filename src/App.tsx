@@ -43,6 +43,9 @@ export function App() {
 
   return (
     <div class="app">
+      <a class="skip-link" href="#main-content">
+        Skip to main content
+      </a>
       <WelcomeModal />
       <header class="app-header">
         <div class="app-title">
@@ -54,7 +57,7 @@ export function App() {
         <Toolbar />
       </header>
       <Stepper />
-      <div class="app-body" data-stage={stage()}>
+      <div class="app-body" data-stage={stage()} id="main-content" tabindex="-1">
         <Show
           when={stage() !== 'answer'}
           fallback={
@@ -64,7 +67,7 @@ export function App() {
                   <div class="orb-inner" />
                   <div class="orb-halo" />
                 </div>
-                <h3>Your shape is taking form.</h3>
+                <h2>Your shape is taking form.</h2>
                 <p>
                   The canvas is quiet on purpose. Answer whatever prompts feel true —
                   or drop a PDF, or describe in words — without watching the shape
@@ -165,11 +168,12 @@ export function App() {
           </main>
 
           <Show when={stage() === 'extend'}>
-            <div class="mobile-tabs" role="tablist" aria-label="Mobile panel selector">
+            {/* Plain toggle buttons (not ARIA tabs): they show/hide panes and
+                don't implement the arrow-key tab pattern. */}
+            <div class="mobile-tabs" aria-label="Panel selector">
               <button
                 type="button"
-                role="tab"
-                aria-selected={mobilePane() === 'sliders'}
+                aria-pressed={mobilePane() === 'sliders'}
                 class={mobilePane() === 'sliders' ? 'active' : ''}
                 onClick={() => setMobilePane('sliders')}
               >
@@ -177,8 +181,7 @@ export function App() {
               </button>
               <button
                 type="button"
-                role="tab"
-                aria-selected={mobilePane() === 'instruments'}
+                aria-pressed={mobilePane() === 'instruments'}
                 class={mobilePane() === 'instruments' ? 'active' : ''}
                 onClick={() => setMobilePane('instruments')}
               >

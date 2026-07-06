@@ -5,6 +5,7 @@ import {
   profile,
   activeInstruments,
   instrumentsCache,
+  motionPaused,
   setDomain,
   setHoveredDomain,
 } from '../store';
@@ -169,7 +170,11 @@ export function SoftRadar() {
         const cx = w / 2;
         const cy = h / 2;
         const r = Math.min(w, h) * 0.36;
-        t += 0.004;
+        // Freeze the breathing wobble when motion is paused (user toggle or
+        // prefers-reduced-motion default) — the shape stays fully legible,
+        // it just holds still.
+        const still = motionPaused();
+        if (!still) t += 0.004;
 
         const n = DOMAINS.length;
         const dark = theme() === 'dark';
@@ -200,7 +205,7 @@ export function SoftRadar() {
           DOMAINS.map((d, i) => {
             const angle = -Math.PI / 2 + (i * 2 * Math.PI) / n;
             const v = pf[d.id] ?? 0;
-            const noise = (p.noise(i * 0.6, t) - 0.5) * wobble;
+            const noise = still ? 0 : (p.noise(i * 0.6, t) - 0.5) * wobble;
             const radius = (r * Math.max(0, Math.min(100, v + noise))) / 100;
             return { angle, radius };
           });
@@ -279,10 +284,27 @@ export function SoftRadar() {
     resizeObs?.disconnect();
   });
 
+  // Text alternative for the canvas (WCAG 1.1.1) — a reactive summary of the
+  // profile and any active instruments, updated as the shape changes.
+  const radarSummary = () => {
+    const domainParts = DOMAINS.map((d) => `${d.label} ${profile[d.id]} of 100`);
+    const active = activeInstruments();
+    const names = instrumentsCache()
+      .filter((i) => active.has(i.id))
+      .map((i) => i.name);
+    const extension =
+      names.length > 0
+        ? ` Extended by ${names.length} instrument${names.length > 1 ? 's' : ''} of change: ${names.join(', ')}.`
+        : '';
+    return `Cognition portrait radar. ${domainParts.join(', ')}.${extension} Use the sliders in the Build the shape panel to adjust these values with a keyboard.`;
+  };
+
   return (
     <div
       class="radar-host"
       ref={containerRef}
+      role="img"
+      aria-label={radarSummary()}
       onMouseLeave={() => setHoveredDomain(null)}
     />
   );

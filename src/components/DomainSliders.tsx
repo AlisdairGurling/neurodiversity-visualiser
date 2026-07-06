@@ -32,6 +32,7 @@ export function DomainSliders() {
               min={0}
               max={100}
               value={profile[d.id]}
+              aria-label={`${d.label} (${d.clinicalTerm})`}
               onInput={(e) => setDomain(d.id, parseInt(e.currentTarget.value, 10))}
             />
             <span class="slider-clinical">{d.clinicalTerm}</span>

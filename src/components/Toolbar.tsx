@@ -1,5 +1,11 @@
 import { createSignal, Show } from 'solid-js';
-import { activeInstruments, resetAll, snapshotProfile } from '../store';
+import {
+  activeInstruments,
+  motionPaused,
+  resetAll,
+  snapshotProfile,
+  toggleMotionPaused,
+} from '../store';
 import { buildShareUrl } from '../share';
 import { theme, toggleTheme } from '../theme';
 
@@ -30,7 +36,7 @@ export function Toolbar() {
   }
 
   function reset() {
-    if (confirm('Reset all sliders to 50 and clear active instruments?')) {
+    if (confirm('Reset all sliders to 50, clear active instruments, and clear question answers?')) {
       resetAll();
     }
   }
@@ -51,6 +57,20 @@ export function Toolbar() {
         </button>
         <button
           type="button"
+          onClick={toggleMotionPaused}
+          aria-pressed={motionPaused()}
+          title={
+            motionPaused()
+              ? 'Resume the gentle motion of the shape'
+              : 'Pause the gentle motion of the shape'
+          }
+        >
+          <Show when={motionPaused()} fallback="Pause motion">
+            Play motion
+          </Show>
+        </button>
+        <button
+          type="button"
           class="icon-only"
           onClick={toggleTheme}
           aria-label={theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -61,6 +81,10 @@ export function Toolbar() {
           </Show>
         </button>
       </div>
+      {/* Announce clipboard success to screen readers (WCAG 4.1.3) */}
+      <span class="sr-only" role="status" aria-live="polite">
+        {copied() ? 'Share link copied to clipboard' : ''}
+      </span>
     </div>
   );
 }

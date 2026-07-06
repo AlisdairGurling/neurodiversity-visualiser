@@ -71,11 +71,13 @@ export function PdfImport() {
         </label>
       </div>
       <Show when={error()}>
-        <p class="import-error">{error()}</p>
+        <p class="import-error" role="alert">
+          {error()}
+        </p>
       </Show>
       <Show when={result()}>
         {(r) => (
-          <div class="import-result">
+          <div class="import-result" role="status">
             <p>
               Found {r().matched.length} of {PATTERN_COUNT} Wechsler / WIAT indices.
             </p>
