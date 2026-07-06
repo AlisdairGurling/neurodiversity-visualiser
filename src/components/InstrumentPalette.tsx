@@ -11,25 +11,29 @@ import type { Instrument, InstrumentCategory, ToolLinePosition } from '../types'
 
 const CATEGORY_META: Record<
   InstrumentCategory,
-  { label: string; blurb: string; searchUrl: string }
+  { label: string; icon: string; blurb: string; searchUrl: string }
 > = {
   'digital-prosthetic': {
     label: 'Digital prosthetics',
+    icon: '💻',
     blurb: 'Technological extensions of cognition.',
     searchUrl: 'https://neurodiversity.tools/?category=digital-prosthetic',
   },
   'mind-body': {
     label: 'Mind-body strategies',
+    icon: '🧘',
     blurb: 'Readying the body so cognition can land.',
     searchUrl: 'https://neurodiversity.tools/?category=mind-body',
   },
   relational: {
     label: 'Relational instruments',
+    icon: '🤝',
     blurb: 'Cognition held in concert with others.',
     searchUrl: 'https://neurodiversity.tools/?category=relational',
   },
   'space-making': {
     label: 'Space-making',
+    icon: '🏛️',
     blurb: 'The atmosphere and pedagogy around the learner.',
     searchUrl: 'https://neurodiversity.tools/?category=space-making',
   },
@@ -94,11 +98,14 @@ export function InstrumentPalette() {
         </div>
       </Show>
 
-      <For each={Object.entries(CATEGORY_META) as [InstrumentCategory, { label: string; blurb: string; searchUrl: string }][]}>
+      <For each={Object.entries(CATEGORY_META) as [InstrumentCategory, { label: string; icon: string; blurb: string; searchUrl: string }][]}>
         {([cat, meta]) => (
           <section class="palette-category">
             <header>
-              <h3>{meta.label}</h3>
+              <h3>
+                <span class="category-icon" aria-hidden="true">{meta.icon}</span>
+                {meta.label}
+              </h3>
               <p>{meta.blurb}</p>
             </header>
             <ul>
@@ -122,7 +129,10 @@ export function InstrumentPalette() {
                         />
                         <span class="instrument-body">
                           <span class="instrument-head">
-                            <span class="instrument-name">{inst.name}</span>
+                            <span class="instrument-name">
+                              <span class="instrument-icon" aria-hidden="true">{inst.icon}</span>
+                              {inst.name}
+                            </span>
                             <Show when={inst.externalLink}>
                               <a
                                 class="instrument-link"

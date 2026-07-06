@@ -109,13 +109,19 @@ h1, h2, h3 {
 
 .app-body {
   display: grid;
-  grid-template-columns: 280px minmax(0, 1fr) 340px;
+  grid-template-columns: 320px minmax(0, 1fr) 340px;
   /* Single row that fills whatever vertical space is left after the header
      and footer. minmax(0, 1fr) lets the asides scroll internally instead of
      forcing the row taller than the viewport. */
   grid-template-rows: minmax(0, 1fr);
   flex: 1;
   min-height: 0;
+  transition: grid-template-columns 200ms ease;
+}
+/* Stage-based grid: no instruments column in Answer/Reveal. */
+.app-body[data-stage="answer"],
+.app-body[data-stage="reveal"] {
+  grid-template-columns: 360px minmax(0, 1fr);
 }
 
 /* Markup order is: canvas, mobile-tabs, sliders, instruments — pin each
@@ -537,6 +543,225 @@ input[type="range"] {
   gap: 0.75rem;
 }
 
+/* Stepper — sits between header and body */
+.stepper {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 0.5rem 1.5rem;
+}
+.stepper ol {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.stepper .step { flex: 0 0 auto; }
+.stepper .step button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color 120ms, background 120ms, color 120ms;
+}
+.stepper .step button:hover { border-color: var(--accent); color: var(--fg); }
+.stepper .step.current button {
+  border-color: var(--base);
+  background: rgba(255, 169, 90, 0.12);
+  color: var(--fg);
+  font-weight: 700;
+}
+.stepper .step.done button {
+  border-color: var(--extension);
+  color: var(--extension-deep);
+}
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+.stepper .step.current .step-number {
+  background: var(--base);
+  border-color: var(--base);
+  color: #fff;
+}
+.stepper .step.done .step-number {
+  background: var(--extension);
+  border-color: var(--extension);
+  color: #fff;
+}
+.step-icon { font-size: 1rem; }
+.step-label { font-weight: 700; letter-spacing: 0.02em; }
+
+/* Stage transition buttons at the bottom of the build panel */
+.stage-forward {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--base);
+  background: var(--base);
+  color: #fff;
+  border-radius: 8px;
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 120ms;
+}
+.stage-forward:hover { filter: brightness(1.05); }
+.stage-forward-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+.stage-forward-row .stage-forward { flex: 1; margin-top: 0; }
+.stage-back {
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  border-radius: 8px;
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.stage-back:hover { color: var(--fg); border-color: var(--accent); }
+
+/* Reveal placeholder — sits in the middle column during Answer */
+.reveal-placeholder {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 2rem 2.5rem;
+  text-align: center;
+}
+.reveal-placeholder h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg);
+}
+.reveal-placeholder p {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+.reveal-placeholder .placeholder-hint {
+  color: var(--fg);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+.reveal-placeholder .primary {
+  margin-top: 0.5rem;
+  padding: 0.7rem 1.3rem;
+  border: 1px solid var(--base);
+  background: var(--base);
+  color: #fff;
+  border-radius: 999px;
+  font: inherit;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 120ms, transform 120ms;
+}
+.reveal-placeholder .primary:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+/* Softly-glowing orb — a stand-in for the shape while it forms */
+.placeholder-orb {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin-bottom: 0.4rem;
+}
+.orb-inner,
+.orb-halo {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.orb-inner {
+  background: radial-gradient(circle at 40% 40%, var(--base) 0%, var(--base-deep) 100%);
+  animation: orb-pulse 4s ease-in-out infinite;
+  filter: blur(2px);
+}
+.orb-halo {
+  inset: -14px;
+  background: radial-gradient(circle, rgba(59, 161, 129, 0.4) 0%, transparent 65%);
+  animation: orb-halo 6s ease-in-out infinite;
+}
+@keyframes orb-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.88; }
+  50%      { transform: scale(1.05); opacity: 1; }
+}
+@keyframes orb-halo {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%      { transform: scale(1.12); opacity: 0.9; }
+}
+
+/* Fade the canvas in when Reveal is entered */
+.canvas-pane .radar-host { animation: fade-in 500ms ease; }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Icons */
+.slider-head .slider-icon {
+  display: inline-block;
+  font-size: 1rem;
+  margin-right: 0.35rem;
+  line-height: 1;
+}
+.category-icon {
+  display: inline-block;
+  margin-right: 0.4rem;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+.instrument-icon {
+  display: inline-block;
+  margin-right: 0.35rem;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+.caption-icon {
+  display: inline-block;
+  margin-right: 0.35rem;
+  font-size: 1rem;
+}
+.section-icon { margin-right: 0.4rem; }
+
 .dropzone {
   border: 1.5px dashed var(--border);
   border-radius: 6px;
@@ -930,7 +1155,10 @@ input[type="range"] {
     overflow: visible;
   }
 
-  .app-body {
+  .app-body,
+  .app-body[data-stage="answer"],
+  .app-body[data-stage="reveal"],
+  .app-body[data-stage="extend"] {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
   }

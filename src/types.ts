@@ -18,6 +18,7 @@ export type Citation = {
 export type Domain = {
   id: DomainId;
   label: string;
+  icon: string;
   clinicalTerm: string;
   description: string;
   extendedDescription: string;
@@ -35,6 +36,7 @@ export type ToolLinePosition = 'accepted' | 'contested' | 'stigmatised';
 export type Instrument = {
   id: string;
   name: string;
+  icon: string;
   category: InstrumentCategory;
   description: string;
   lifts: Partial<Record<DomainId, number>>;

@@ -53,6 +53,22 @@ export function setExperienceMode(m: ExperienceMode) {
   localStorage.setItem(EXPERIENCE_KEY, m);
 }
 
+// Linear stage flow: Answer -> Reveal -> Extend. The canvas is deliberately
+// hidden during Answer so users aren't tempted to shape their answers to make
+// the shape prettier. Returning visitors resume where they left off.
+export type Stage = 'answer' | 'reveal' | 'extend';
+const STAGE_KEY = 'nv.stage';
+function loadStage(): Stage {
+  const v = localStorage.getItem(STAGE_KEY);
+  return v === 'reveal' || v === 'extend' ? v : 'answer';
+}
+const [stageSignal, setStageSignal] = createSignal<Stage>(loadStage());
+export const stage = stageSignal;
+export function setStage(s: Stage) {
+  setStageSignal(s);
+  localStorage.setItem(STAGE_KEY, s);
+}
+
 const [questionSelections, setQuestionSelectionsSignal] = createSignal<ReadonlySet<string>>(
   loadQuestionSelections(),
 );
@@ -121,4 +137,5 @@ export function resetAll() {
   for (const d of DOMAINS) setProfile(d.id, 50);
   setActive(new Set<string>());
   setQuestionSelections(new Set<string>());
+  setStage('answer');
 }

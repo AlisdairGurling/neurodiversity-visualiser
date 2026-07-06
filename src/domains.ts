@@ -12,6 +12,7 @@ export const DOMAINS: Domain[] = [
   {
     id: 'reading',
     label: 'Reading',
+    icon: '📖',
     clinicalTerm: 'WIAT Reading',
     description: 'Meeting the written word.',
     extendedDescription:
@@ -26,6 +27,7 @@ export const DOMAINS: Domain[] = [
   {
     id: 'words',
     label: 'Words & language',
+    icon: '💬',
     clinicalTerm: 'Verbal Comprehension (WISC-V)',
     description: 'Thinking in words — understanding, reasoning with, and expressing ideas through language.',
     extendedDescription:
@@ -41,6 +43,7 @@ export const DOMAINS: Domain[] = [
   {
     id: 'writing',
     label: 'Writing',
+    icon: '✍️',
     clinicalTerm: 'WIAT Written Expression',
     description: 'Putting thought into written form, including handwriting.',
     extendedDescription:
@@ -57,6 +60,7 @@ export const DOMAINS: Domain[] = [
   {
     id: 'focus',
     label: 'Staying with it',
+    icon: '🎯',
     clinicalTerm: 'Sustained Attention',
     description: 'Keeping your attention where you want it to be.',
     extendedDescription:
@@ -71,6 +75,7 @@ export const DOMAINS: Domain[] = [
   {
     id: 'planning',
     label: 'Planning & self-steering',
+    icon: '🧭',
     clinicalTerm: 'Executive Function',
     description: 'Choosing, sequencing, adjusting — steering your own cognition.',
     extendedDescription:
@@ -85,6 +90,7 @@ export const DOMAINS: Domain[] = [
   {
     id: 'numbers',
     label: 'Numbers',
+    icon: '🔢',
     clinicalTerm: 'WIAT Mathematics',
     description: 'Working with quantities, relations, and operations.',
     extendedDescription:
@@ -99,6 +105,7 @@ export const DOMAINS: Domain[] = [
   {
     id: 'space',
     label: 'Space & pattern',
+    icon: '🧩',
     clinicalTerm: 'Visual-Spatial (WISC-V)',
     description: 'Thinking in images and patterns — how things fit, move, and relate in space.',
     extendedDescription:
@@ -113,6 +120,7 @@ export const DOMAINS: Domain[] = [
   {
     id: 'puzzles',
     label: 'Puzzles & reasoning',
+    icon: '💡',
     clinicalTerm: 'Fluid Reasoning (WISC-V)',
     description: 'Meeting unfamiliar problems and working out the shape of a solution.',
     extendedDescription:
@@ -131,6 +139,7 @@ export const DOMAINS: Domain[] = [
   {
     id: 'quick',
     label: 'Quick thinking',
+    icon: '⚡',
     clinicalTerm: 'Processing Speed (WISC-V)',
     description: 'How swiftly familiar thought becomes action.',
     extendedDescription:
@@ -145,6 +154,7 @@ export const DOMAINS: Domain[] = [
   {
     id: 'holding',
     label: 'Holding in mind',
+    icon: '🎒',
     clinicalTerm: 'Working Memory (WISC-V)',
     description: 'Keeping ideas live and available while you work with them.',
     extendedDescription:

@@ -12,6 +12,7 @@ export function DomainSliders() {
         {(d) => (
           <div class="slider-row">
             <div class="slider-head">
+              <span class="slider-icon" aria-hidden="true">{d.icon}</span>
               <span class="slider-label" title={d.description}>
                 {d.label}
               </span>

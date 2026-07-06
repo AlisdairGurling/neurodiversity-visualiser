@@ -4,6 +4,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'tts',
     name: 'Text-to-speech',
+    icon: '🎧',
     category: 'digital-prosthetic',
     description: 'Have written text read aloud.',
     lifts: { reading: 30, words: 10, holding: 5 },
@@ -13,6 +14,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'stt',
     name: 'Speech-to-text',
+    icon: '🎙️',
     category: 'digital-prosthetic',
     description: 'Speak your thoughts and let the machine write.',
     lifts: { writing: 30, words: 10 },
@@ -22,6 +24,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'mindmap',
     name: 'Mind-mapping',
+    icon: '🕸️',
     category: 'digital-prosthetic',
     description: 'Externalise structure spatially before sequencing words.',
     lifts: { planning: 20, space: 10, writing: 10, puzzles: 5 },
@@ -30,6 +33,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'taskmgr',
     name: 'Task manager',
+    icon: '✅',
     category: 'digital-prosthetic',
     description: 'Offload holding and sequencing to a trusted outside surface.',
     lifts: { planning: 25, holding: 20, focus: 10 },
@@ -38,6 +42,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'calc',
     name: 'Calculator & maths aids',
+    icon: '🧮',
     category: 'digital-prosthetic',
     description: 'Route around arithmetic so reasoning can run.',
     lifts: { numbers: 25, puzzles: 5, quick: 10 },
@@ -46,6 +51,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'breath',
     name: 'Breathwork',
+    icon: '🫁',
     category: 'mind-body',
     description: 'Steady the body so cognition has somewhere to land.',
     lifts: { focus: 15, planning: 5 },
@@ -54,6 +60,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'movement',
     name: 'Movement & fidget',
+    icon: '🤸',
     category: 'mind-body',
     description: 'Bodies that can move think differently.',
     lifts: { focus: 20, quick: 5 },
@@ -62,6 +69,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'metacog',
     name: 'Notice & name',
+    icon: '👁️',
     category: 'mind-body',
     description: 'Catch the pattern and choose again.',
     lifts: { planning: 15, focus: 10 },
@@ -70,6 +78,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'peers',
     name: 'Neurodivergent peers',
+    icon: '👥',
     category: 'relational',
     description: 'Find yourself surprised and delighted by different minds.',
     lifts: { planning: 10, words: 10, focus: 5 },
@@ -78,6 +87,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'collective-reflection',
     name: 'Collective reflection',
+    icon: '🗣️',
     category: 'relational',
     description: 'Sense-making together — "Have you tried…".',
     lifts: { planning: 10, words: 5, writing: 5 },
@@ -86,6 +96,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'quiet',
     name: 'Noise-calmed space',
+    icon: '🔇',
     category: 'space-making',
     description: 'Less sensory noise, more attention to keep.',
     lifts: { focus: 25, holding: 10, reading: 10 },
@@ -94,6 +105,7 @@ export const INSTRUMENTS: Instrument[] = [
   {
     id: 'rhizomatic',
     name: 'Rhizomatic pedagogy',
+    icon: '🌱',
     category: 'space-making',
     description: 'Learning that meanders rather than marches.',
     lifts: { puzzles: 15, words: 10, space: 10 },

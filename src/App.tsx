@@ -4,12 +4,16 @@ import { InstrumentPalette } from './components/InstrumentPalette';
 import { Toolbar } from './components/Toolbar';
 import { ImportPanel } from './components/ImportPanel';
 import { WelcomeModal } from './components/WelcomeModal';
+import { Stepper } from './components/Stepper';
+import { RevealPlaceholder } from './components/RevealPlaceholder';
 import {
   activateInstrument,
   applyProfilePatch,
   hoveredDomain,
   loadInstruments,
   setActiveInstruments,
+  setStage,
+  stage,
 } from './store';
 import { DOMAINS } from './domains';
 import { decodeShare } from './share';
@@ -22,13 +26,9 @@ export function App() {
   const [dropHint, setDropHint] = createSignal(false);
 
   onMount(() => {
-    // Stop the browser auto-scrolling to a remembered position or to a non-
-    // existent element matching a share-URL hash like "#p=...".
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
-    // Snap to top now, and again after the first paint — mobile in particular
-    // can re-scroll once layout settles or the welcome modal opens.
     window.scrollTo(0, 0);
     requestAnimationFrame(() => window.scrollTo(0, 0));
 
@@ -54,7 +54,42 @@ export function App() {
         </div>
         <Toolbar />
       </header>
-      <div class="app-body">
+      <Stepper />
+      <div class="app-body" data-stage={stage()}>
+        <aside
+          class="sliders"
+          data-mobile-hidden={stage() === 'extend' && mobilePane() !== 'sliders'}
+        >
+          <ImportPanel />
+          <Show when={stage() === 'answer'}>
+            <button
+              type="button"
+              class="stage-forward primary"
+              onClick={() => setStage('reveal')}
+            >
+              ✨ Reveal my shape
+            </button>
+          </Show>
+          <Show when={stage() === 'reveal'}>
+            <div class="stage-forward-row">
+              <button
+                type="button"
+                class="stage-back"
+                onClick={() => setStage('answer')}
+              >
+                ← Back to answering
+              </button>
+              <button
+                type="button"
+                class="stage-forward primary"
+                onClick={() => setStage('extend')}
+              >
+                🌱 Extend with instruments
+              </button>
+            </div>
+          </Show>
+        </aside>
+
         <main
           class={`canvas-pane ${dropHint() ? 'drop-ready' : ''}`}
           onDragEnter={(e) => {
@@ -68,7 +103,6 @@ export function App() {
             setDropHint(true);
           }}
           onDragLeave={(e) => {
-            // ignore leaves into descendant elements
             const related = e.relatedTarget as Node | null;
             if (related && (e.currentTarget as Node).contains(related)) return;
             setDropHint(false);
@@ -80,64 +114,76 @@ export function App() {
             setDropHint(false);
           }}
         >
-          <SoftRadar />
-          <Show when={dropHint()}>
-            <div class="drop-overlay">
-              <p>Drop to layer this instrument</p>
-            </div>
-          </Show>
-          <p class="canvas-caption">
-            <Show
-              when={hoveredDomain()}
-              fallback={
-                <>
-                  Hover a vertex for its description. Drag any vertex to reshape the cognition. On
-                  a desktop, drag an instrument onto the shape; on a phone, tap an instrument to
-                  layer it in.
-                </>
-              }
-            >
-              {(id) => {
-                const d = DOMAINS.find((x) => x.id === id());
-                return (
-                  <Show when={d}>
-                    <span class="caption-label">{d!.label}</span>
-                    <span class="caption-clinical"> — {d!.clinicalTerm}</span>
-                    <br />
-                    <span class="caption-desc">{d!.description}</span>
-                  </Show>
-                );
-              }}
+          <Show
+            when={stage() !== 'answer'}
+            fallback={<RevealPlaceholder />}
+          >
+            <SoftRadar />
+            <Show when={dropHint()}>
+              <div class="drop-overlay">
+                <p>Drop to layer this instrument</p>
+              </div>
             </Show>
-          </p>
+            <p class="canvas-caption">
+              <Show
+                when={hoveredDomain()}
+                fallback={
+                  <>
+                    Hover a vertex for its description. Drag any vertex to reshape the cognition.
+                    On a desktop, drag an instrument onto the shape; on a phone, tap an instrument
+                    to layer it in.
+                  </>
+                }
+              >
+                {(id) => {
+                  const d = DOMAINS.find((x) => x.id === id());
+                  return (
+                    <Show when={d}>
+                      <span class="caption-icon" aria-hidden="true">{d!.icon}</span>
+                      <span class="caption-label">{d!.label}</span>
+                      <span class="caption-clinical"> — {d!.clinicalTerm}</span>
+                      <br />
+                      <span class="caption-desc">{d!.description}</span>
+                    </Show>
+                  );
+                }}
+              </Show>
+            </p>
+          </Show>
         </main>
-        <div class="mobile-tabs" role="tablist" aria-label="Mobile panel selector">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mobilePane() === 'sliders'}
-            class={mobilePane() === 'sliders' ? 'active' : ''}
-            onClick={() => setMobilePane('sliders')}
+
+        <Show when={stage() === 'extend'}>
+          <div class="mobile-tabs" role="tablist" aria-label="Mobile panel selector">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mobilePane() === 'sliders'}
+              class={mobilePane() === 'sliders' ? 'active' : ''}
+              onClick={() => setMobilePane('sliders')}
+            >
+              📝 Cognition
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mobilePane() === 'instruments'}
+              class={mobilePane() === 'instruments' ? 'active' : ''}
+              onClick={() => setMobilePane('instruments')}
+            >
+              🌱 Instruments
+            </button>
+          </div>
+          <aside
+            class="instruments"
+            data-mobile-hidden={mobilePane() !== 'instruments'}
           >
-            Cognition
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={mobilePane() === 'instruments'}
-            class={mobilePane() === 'instruments' ? 'active' : ''}
-            onClick={() => setMobilePane('instruments')}
-          >
-            Instruments
-          </button>
-        </div>
-        <aside class="sliders" data-mobile-hidden={mobilePane() !== 'sliders'}>
-          <ImportPanel />
-        </aside>
-        <aside class="instruments" data-mobile-hidden={mobilePane() !== 'instruments'}>
-          <h2>Instruments of change</h2>
-          <InstrumentPalette />
-        </aside>
+            <h2>
+              <span class="section-icon" aria-hidden="true">🌱</span>
+              Instruments of change
+            </h2>
+            <InstrumentPalette />
+          </aside>
+        </Show>
       </div>
       <footer class="app-footer">
         <span>A project by Alisdair Gurling.</span>
